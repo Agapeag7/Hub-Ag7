@@ -98,6 +98,7 @@ body {
 .card[data-network="whatsapp"] { --glow-color: rgba(37, 211, 102, 0.5); }
 .card[data-network="github"] { --glow-color: rgba(245, 245, 245, 0.5); }
 .card[data-network="email"] { --glow-color: rgba(234, 67, 53, 0.5); }
+.card[data-network="x"] { --glow-color: rgba(0, 0, 0, 0.7); }
 
 .card[data-network="facebook"] i { color: #1877f2; }
 .card[data-network="instagram"] i { color: #e4405f; }
