@@ -24,18 +24,18 @@ body {
     width: 100%;
     height: 100%;
     z-index: 2;
-    pointer-events: none; /* les cartes deviennent cliquables via la gestion three */
+    pointer-events: auto; /* permet l'interaction scroll et drag */
 }
 /* style de base des cartes (seront appliqués via CSS3D) */
 .card {
     width: 240px;
     height: 280px;
     background: rgba(20, 25, 35, 0.75);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-radius: 28px;
     border: 1px solid rgba(100, 150, 255, 0.2);
-    box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(120, 180, 255, 0.15) inset, 0 0 30px rgba(0, 180, 255, 0.2);
+    box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(120, 180, 255, 0.15) inset, 0 0 22px var(--glow-color, rgba(0, 180, 255, 0.2));
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -90,6 +90,15 @@ body {
     margin-top: 10px;
 }
 /* couleurs spécifiques pour glow */
+.card[data-network="facebook"] { --glow-color: rgba(24, 119, 242, 0.5); }
+.card[data-network="instagram"] { --glow-color: rgba(228, 64, 95, 0.5); }
+.card[data-network="tiktok"] { --glow-color: rgba(255, 255, 255, 0.6); }
+.card[data-network="linkedin"] { --glow-color: rgba(10, 102, 194, 0.5); }
+.card[data-network="telegram"] { --glow-color: rgba(38, 165, 228, 0.5); }
+.card[data-network="whatsapp"] { --glow-color: rgba(37, 211, 102, 0.5); }
+.card[data-network="github"] { --glow-color: rgba(245, 245, 245, 0.5); }
+.card[data-network="email"] { --glow-color: rgba(234, 67, 53, 0.5); }
+
 .card[data-network="facebook"] i { color: #1877f2; }
 .card[data-network="instagram"] i { color: #e4405f; }
 .card[data-network="tiktok"] i { color: #ffffff; text-shadow: 0 0 10px #69c9d0, 0 0 20px #ee1d52; }

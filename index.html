@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -200,9 +200,9 @@
                     }
 
                     if (Math.abs(offset) >= 2) {
-                        div.style.filter = 'blur(3px) brightness(0.5)';
+                        div.style.filter = 'blur(1.2px) brightness(0.78)';
                     } else if (Math.abs(offset) === 1) {
-                        div.style.filter = 'blur(1.5px) brightness(0.7)';
+                        div.style.filter = 'blur(0.7px) brightness(0.86)';
                     } else {
                         div.style.filter = '';
                     }
@@ -232,12 +232,7 @@
             });
             
             // effet de parallax subtil du fond selon l'index actif (bouger la caméra ou le groupe)
-            // on peut déplacer très légèrement la caméra en X en fonction de currentIndex
-            // mais attention à garder l'active centrée
-            // plutôt faire bouger le groupe? non, on veut que l'active reste devant.
-            // on peut translater le groupe pour que l'active soit à x=0, mais on a déjà ajusté positions.
-            // Pour un effet de parallax, on peut faire bouger la caméra latéralement très peu.
-            // camera.position.x = currentIndex * 5; // trop brutal, mieux vaut garder la caméra fixe
+            // camera.position.x = currentIndex * 5; // trop brutal, garder la caméra fixe
             
             // inertie du scroll
             if (Math.abs(wheelVelocity) > 0.01) {
@@ -250,22 +245,21 @@
             
             // faire tendre currentIndex vers targetIndex
             const diff = targetIndex - currentIndex;
-            if (Math.abs(diff) > 0.001) {
-                currentIndex += diff * 0.1;
-                if (Math.abs(diff) < 0.01) currentIndex = targetIndex;
-                updateCardPositions(Math.round(currentIndex)); // on utilise l'arrondi pour la classe active
-            }
+            currentIndex += diff * 0.15;
+            if (Math.abs(diff) < 0.001) currentIndex = targetIndex;
+            updateCardPositions(currentIndex);
             
             renderer.render(scene, camera);
         }
 
         // --- gestion du scroll (wheel) ---
         function onWheel(e) {
+            if (e.ctrlKey || e.metaKey) return; // laisser les raccourcis (zoom) tranquilles
             e.preventDefault();
-            const delta = e.deltaY * 0.001; // sensibilité
+            const delta = (e.deltaY || -e.wheelDelta || 0) * 0.0013; // sensibilité ajustée pour moins de sauts
             wheelVelocity += delta;
             // limiter vélocité
-            wheelVelocity = Math.max(-0.3, Math.min(0.3, wheelVelocity));
+            wheelVelocity = Math.max(-0.45, Math.min(0.45, wheelVelocity));
             lastWheelTime = performance.now();
         }
 
@@ -337,7 +331,7 @@
             
             function initParticles() {
                 particles = [];
-                const count = 80;
+                const count = 45; // moins de particules pour alléger le rendu
                 for (let i = 0; i < count; i++) {
                     particles.push({
                         x: Math.random() * width,
@@ -418,16 +412,15 @@
             // petit effet de floating léger au repos (optionnel)
             setInterval(() => {
                 if (Math.abs(wheelVelocity) < 0.01 && performance.now() - lastWheelTime > 2000) {
-                    // faire osciller légèrement les cartes autour de leur position cible
-                    // on peut ajouter une micro variation de rotation Y
+                    // oscillation très légère et peu fréquente pour réduire charge
                     cardObjects.forEach((obj, i) => {
                         if (obj.userData.targetRotY !== undefined) {
-                            const float = Math.sin(Date.now() * 0.002 + i) * 0.02;
-                            obj.rotation.y += float * 0.01;
+                            const float = Math.sin(Date.now() * 0.001 + i) * 0.005;
+                            obj.rotation.y += float;
                         }
                     });
                 }
-            }, 100);
+            }, 250);
         });
 
         // --- petite aide pour le gyroscope (mobile) ---
