@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Hub AG7 · réseaux sociaux</title>
+    <!-- Font Awesome pour icônes pro -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0c0f;
+            color: white;
+        }
+        /* fond dynamique avec particules (canvas généré par js) */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        /* conteneur principal three.js (css3d) */
+        #scene-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none; /* les cartes deviennent cliquables via la gestion three */
+        }
+        /* style de base des cartes (seront appliqués via CSS3D) */
+        .card {
+            width: 240px;
+            height: 280px;
+            background: rgba(20, 25, 35, 0.75);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 28px;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(120, 180, 255, 0.15) inset, 0 0 30px rgba(0, 180, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+            transition: filter 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            /* effet de reflet subtil */
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            will-change: transform, filter;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 70%);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+        .card i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px currentColor);
+            transition: transform 0.2s;
+        }
+        .card .network-name {
+            font-weight: 600;
+            font-size: 1.6rem;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff, #b0c4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card .handle {
+            font-size: 1rem;
+            opacity: 0.8;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-top: 10px;
+        }
+        /* couleurs spécifiques pour glow */
+        .card[data-network="facebook"] i { color: #1877f2; }
+        .card[data-network="instagram"] i { color: #e4405f; }
+        .card[data-network="tiktok"] i { color: #ffffff; text-shadow: 0 0 10px #69c9d0, 0 0 20px #ee1d52; }
+        .card[data-network="linkedin"] i { color: #0a66c2; }
+        .card[data-network="telegram"] i { color: #26a5e4; }
+        .card[data-network="whatsapp"] i { color: #25d366; }
+        .card[data-network="github"] i { color: #f5f5f5; }
+        .card[data-network="email"] i { color: #ea4335; }
+
+        /* flou et atténuation pour cartes éloignées (appliqué dynamiquement via js) */
+        .card.blurred {
+            filter: blur(2px) brightness(0.6);
+            opacity: 0.7;
+        }
+        .card.active {
+            filter: brightness(1.2) drop-shadow(0 0 25px rgba(0, 180, 255, 0.6));
+            border-color: rgba(100, 200, 255, 0.6);
+            box-shadow: 0 30px 50px -10px black, 0 0 0 2px rgba(100, 200, 255, 0.4) inset, 0 0 40px #00a6ff;
+        }
+        /* loader discret pour éviter FOUC */
+        .loading {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.8rem;
+            z-index: 10;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+    <div id="scene-container"></div>
+    <div class="loading">scroll · explore</div>
+
+    <!-- Three.js et CSS3DRenderer -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { CSS3DRenderer, CSS3DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
+
+        // --- configuration ---
+        const CARDS = [
+            { network: 'facebook',   icon: 'fab fa-facebook',   handle: '@ag7_fb',   link: 'https://facebook.com/ag7', color: '#1877f2' },
+            { network: 'instagram',  icon: 'fab fa-instagram',  handle: '@ag7_ig',   link: 'https://instagram.com/ag7', color: '#e4405f' },
+            { network: 'tiktok',     icon: 'fab fa-tiktok',     handle: '@ag7_tk',   link: 'https://tiktok.com/@ag7', color: '#ffffff' },
+            { network: 'linkedin',   icon: 'fab fa-linkedin',   handle: '@ag7_in',   link: 'https://linkedin.com/in/ag7', color: '#0a66c2' },
+            { network: 'telegram',   icon: 'fab fa-telegram',   handle: '@ag7_tg',   link: 'https://t.me/ag7', color: '#26a5e4' },
+            { network: 'whatsapp',   icon: 'fab fa-whatsapp',   handle: '+123456789', link: 'https://wa.me/123456789', color: '#25d366' },
+            { network: 'github',     icon: 'fab fa-github',     handle: '@ag7',      link: 'https://github.com/ag7', color: '#f5f5f5' },
+            { network: 'email',      icon: 'fas fa-envelope',   handle: 'me@ag7.dev', link: 'mailto:me@ag7.dev', color: '#ea4335' }
+        ];
+
+        // --- variables globales ---
+        let scene, camera, renderer;
+        let cardGroup;               // groupe contenant tous les objets CSS3D
+        let cardObjects = [];         // référence aux objets
+        let currentIndex = 0;         // index actif (interpolé)
+        let targetIndex = 0;
+        let isAnimating = false;
+        let wheelVelocity = 0;
+        let lastWheelTime = performance.now();
+        
+        // paramètres de disposition 3D
+        const CARD_WIDTH = 240;
+        const CARD_HEIGHT = 280;
+        const SPACING = 300;          // distance entre centres sur l'axe X
+        const DEPTH_FACTOR = 350;      // amplitude du décalage Z
+        const ROTATION_ANGLE = 0.5;     // radians max pour rotation Y
+
+        // --- initialisation Three.js avec CSS3DRenderer ---
+        function initScene() {
+            scene = new THREE.Scene();
+            
+            // caméra perspective
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
+            camera.position.set(0, 0, 1200); // reculée pour voir l'ensemble
+            camera.lookAt(0, 0, 0);
+            
+            // renderer CSS3D
+            renderer = new CSS3DRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.domElement.style.position = 'fixed';
+            renderer.domElement.style.top = '0';
+            renderer.domElement.style.left = '0';
+            renderer.domElement.style.pointerEvents = 'none'; // on gère les events via les cartes elles-mêmes
+            document.getElementById('scene-container').appendChild(renderer.domElement);
+            
+            // groupe des cartes
+            cardGroup = new THREE.Group();
+            scene.add(cardGroup);
+            
+            // création des cartes
+            createCards();
+            
+            // position initiale
+            updateCardPositions(currentIndex);
+            
+            // ajout d'une lumière ambiante (pas nécessaire pour CSS3D mais pour le fond)
+            // rien à faire
+        }
+
+        // --- création des éléments HTML et conversion en CSS3DObject ---
+        function createCards() {
+            CARDS.forEach((item, index) => {
+                // créer la div de la carte
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.setAttribute('data-network', item.network);
+                div.setAttribute('data-link', item.link);
+                div.setAttribute('data-index', index);
+                
+                // contenu HTML
+                div.innerHTML = `
+                    <i class="${item.icon}"></i>
+                    <span class="network-name">${item.network.charAt(0).toUpperCase() + item.network.slice(1)}</span>
+                    <span class="handle">${item.handle}</span>
+                `;
+                
+                // gestion du clic (ouvrir le lien)
+                div.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const link = div.getAttribute('data-link');
+                    // petite animation "push" en profondeur
+                    div.style.transform = 'scale(0.95) translateZ(-30px)';
+                    setTimeout(() => {
+                        div.style.transform = '';
+                    }, 150);
+                    // ouverture après un court délai pour voir l'animation
+                    setTimeout(() => {
+                        window.open(link, '_blank');
+                    }, 100);
+                });
+                
+                // gestion hover tilt (desktop)
+                div.addEventListener('mousemove', (e) => {
+                    if (window.innerWidth < 768) return; // pas de tilt sur mobile
+                    const rect = div.getBoundingClientRect();
+                    const x = e.clientX - rect.left; // x position within the element
+                    const y = e.clientY - rect.top;  // y position
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotX = (y - centerY) / centerY * 8; // max 8 deg
+                    const rotY = (centerX - x) / centerX * 8;
+                    // appliquer la rotation en plus de la rotation de base (gérée par le groupe)
+                    // on utilise une variable pour ne pas écraser la rotation de la scène
+                    // on stocke dans un dataset pour l'animation
+                    div.dataset.tiltX = rotX;
+                    div.dataset.tiltY = rotY;
+                    div.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+                });
+                
+                div.addEventListener('mouseleave', () => {
+                    div.dataset.tiltX = 0;
+                    div.dataset.tiltY = 0;
+                    div.style.transform = ''; // revient à la rotation du groupe
+                });
+                
+                // créer l'objet CSS3D
+                const cssObject = new CSS3DObject(div);
+                cssObject.position.set(index * SPACING, 0, 0); // placement temporaire, sera écrasé
+                cardGroup.add(cssObject);
+                cardObjects.push(cssObject);
+            });
+        }
+
+        // --- mise à jour des positions/rotations en fonction de l'index actif ---
+        function updateCardPositions(activeIndex) {
+            const total = cardObjects.length;
+            cardObjects.forEach((obj, i) => {
+                // distance relative à l'index actif
+                const offset = i - activeIndex;
+                
+                // position X : les cartes sont espacées mais on recentre pour que l'active soit à x=0
+                const targetX = offset * SPACING;
+                
+                // position Z : les cartes éloignées reculent (négatif) et celles extrêmes un peu plus
+                // forme de U inversé: plus on s'éloigne, plus Z est négatif
+                const absOffset = Math.abs(offset);
+                const targetZ = -absOffset * DEPTH_FACTOR; // négatif = plus loin
+                
+                // rotation Y : les cartes sur les côtés pivotent vers l'intérieur
+                let targetRotY = 0;
+                if (offset < 0) {
+                    targetRotY = ROTATION_ANGLE; // carte à gauche tournée vers la droite
+                } else if (offset > 0) {
+                    targetRotY = -ROTATION_ANGLE; // carte à droite tournée vers la gauche
+                }
+                // plus on est loin, plus la rotation est forte (optionnel)
+                targetRotY *= Math.min(absOffset, 1.5); // plafonner à 1.5*angle
+                
+                // mise à jour de la position/rotation avec interpolation fluide (optionnel ici mais on le fait en animate)
+                // on utilise lerp pour plus tard
+                obj.userData.targetPos = new THREE.Vector3(targetX, 0, targetZ);
+                obj.userData.targetRotY = targetRotY;
+                
+                // gestion du flou et de l'effet actif via classe CSS
+                const div = obj.element;
+                if (i === activeIndex) {
+                    div.classList.add('active');
+                    div.classList.remove('blurred');
+                } else {
+                    div.classList.remove('active');
+                    div.classList.add('blurred');
+                }
+                // flou plus prononcé selon distance
+                if (Math.abs(offset) >= 2) {
+                    div.style.filter = 'blur(3px) brightness(0.5)';
+                } else if (Math.abs(offset) === 1) {
+                    div.style.filter = 'blur(1.5px) brightness(0.7)';
+                } else {
+                    div.style.filter = ''; // actif géré par classe active
+                }
+            });
+        }
+
+        // --- animation loop (lerp vers cible) ---
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // interpolation douce des positions/rotations des cartes
+            const lerpFactor = 0.1;
+            cardObjects.forEach(obj => {
+                if (obj.userData.targetPos) {
+                    // position
+                    obj.position.lerp(obj.userData.targetPos, lerpFactor);
+                    // rotation Y
+                    const rotY = obj.rotation.y;
+                    const targetRotY = obj.userData.targetRotY || 0;
+                    obj.rotation.y += (targetRotY - rotY) * lerpFactor;
+                }
+            });
+            
+            // effet de parallax subtil du fond selon l'index actif (bouger la caméra ou le groupe)
+            // on peut déplacer très légèrement la caméra en X en fonction de currentIndex
+            // mais attention à garder l'active centrée
+            // plutôt faire bouger le groupe? non, on veut que l'active reste devant.
+            // on peut translater le groupe pour que l'active soit à x=0, mais on a déjà ajusté positions.
+            // Pour un effet de parallax, on peut faire bouger la caméra latéralement très peu.
+            // camera.position.x = currentIndex * 5; // trop brutal, mieux vaut garder la caméra fixe
+            
+            // inertie du scroll
+            if (Math.abs(wheelVelocity) > 0.01) {
+                targetIndex += wheelVelocity;
+                // clamping
+                targetIndex = Math.max(0, Math.min(CARDS.length - 1, targetIndex));
+                wheelVelocity *= 0.92; // friction
+                if (Math.abs(wheelVelocity) < 0.001) wheelVelocity = 0;
+            }
+            
+            // faire tendre currentIndex vers targetIndex
+            const diff = targetIndex - currentIndex;
+            if (Math.abs(diff) > 0.001) {
+                currentIndex += diff * 0.1;
+                if (Math.abs(diff) < 0.01) currentIndex = targetIndex;
+                updateCardPositions(Math.round(currentIndex)); // on utilise l'arrondi pour la classe active
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // --- gestion du scroll (wheel) ---
+        function onWheel(e) {
+            e.preventDefault();
+            const delta = e.deltaY * 0.001; // sensibilité
+            wheelVelocity += delta;
+            // limiter vélocité
+            wheelVelocity = Math.max(-0.3, Math.min(0.3, wheelVelocity));
+            lastWheelTime = performance.now();
+        }
+
+        // --- gestion tactile (swipe) ---
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchMoved = false;
+        
+        function onTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchMoved = false;
+        }
+        
+        function onTouchMove(e) {
+            if (!touchStartX) return;
+            e.preventDefault();
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) touchMoved = true;
+            
+            // on utilise le mouvement horizontal pour le scroll
+            const delta = dx * 0.01;
+            wheelVelocity += delta;
+            wheelVelocity = Math.max(-0.3, Math.min(0.3, wheelVelocity));
+            
+            // reset start pour éviter accumulation
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+        
+        function onTouchEnd(e) {
+            if (!touchMoved) {
+                // simuler un clic si pas de mouvement
+                // on laisse le clic natif sur la carte
+            }
+            touchStartX = 0;
+            touchStartY = 0;
+        }
+
+        // --- redimensionnement ---
+        function onResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // ajuster la distance caméra si besoin
+            if (window.innerWidth < 768) {
+                camera.position.z = 1000;
+            } else {
+                camera.position.z = 1200;
+            }
+        }
+
+        // --- fond de particules (canvas 2D) ---
+        function initBackground() {
+            const canvas = document.getElementById('bg-canvas');
+            const ctx = canvas.getContext('2d');
+            let width, height;
+            let particles = [];
+            
+            function resize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
+                initParticles();
+            }
+            
+            function initParticles() {
+                particles = [];
+                const count = 80;
+                for (let i = 0; i < count; i++) {
+                    particles.push({
+                        x: Math.random() * width,
+                        y: Math.random() * height,
+                        z: Math.random() * 200 - 100,
+                        size: Math.random() * 2 + 1,
+                        speed: 0.02 + Math.random() * 0.03,
+                        color: `rgba(100, 150, 255, ${0.2 + Math.random()*0.3})`
+                    });
+                }
+            }
+            
+            function animateBg() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // dégradé de fond
+                const gradient = ctx.createLinearGradient(0, 0, width, height);
+                gradient.addColorStop(0, '#0b0e14');
+                gradient.addColorStop(1, '#1a1f2c');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+                
+                // lignes géométriques subtiles
+                ctx.strokeStyle = 'rgba(60, 130, 240, 0.1)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 10; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(i * width/10, 0);
+                    ctx.lineTo(i * width/10 + 50, height);
+                    ctx.strokeStyle = `rgba(80, 160, 255, ${0.03})`;
+                    ctx.stroke();
+                }
+                
+                // particules
+                particles.forEach(p => {
+                    // mouvement lent vertical
+                    p.y += p.speed * 0.5;
+                    if (p.y > height) p.y = 0;
+                    
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    
+                    // effet de lueur
+                    ctx.shadowColor = '#00a6ff';
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                });
+                
+                requestAnimationFrame(animateBg);
+            }
+            
+            window.addEventListener('resize', resize);
+            resize();
+            animateBg();
+        }
+
+        // --- initialisation complète ---
+        window.addEventListener('load', () => {
+            initBackground();
+            initScene();
+            
+            // événements
+            window.addEventListener('wheel', onWheel, { passive: false });
+            window.addEventListener('touchstart', onTouchStart, { passive: false });
+            window.addEventListener('touchmove', onTouchMove, { passive: false });
+            window.addEventListener('touchend', onTouchEnd);
+            window.addEventListener('resize', onResize);
+            
+            // démarrage animation
+            animate();
+            
+            // petit effet de floating léger au repos (optionnel)
+            setInterval(() => {
+                if (Math.abs(wheelVelocity) < 0.01 && performance.now() - lastWheelTime > 2000) {
+                    // faire osciller légèrement les cartes autour de leur position cible
+                    // on peut ajouter une micro variation de rotation Y
+                    cardObjects.forEach((obj, i) => {
+                        if (obj.userData.targetRotY !== undefined) {
+                            const float = Math.sin(Date.now() * 0.002 + i) * 0.02;
+                            obj.rotation.y += float * 0.01;
+                        }
+                    });
+                }
+            }, 100);
+        });
+
+        // --- petite aide pour le gyroscope (mobile) ---
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', (event) => {
+                // optionnel : faire bouger le fond ou l'orientation de la caméra très légèrement
+                if (window.innerWidth < 768 && event.beta && event.gamma) {
+                    // beta: -180 à 180 (avant/arrière), gamma: -90 à 90 (gauche/droite)
+                    const rotY = (event.gamma || 0) * 0.02; // faible amplitude
+                    const rotX = (event.beta || 0) * 0.01;
+                    // appliquer au groupe pour effet de parallax (très subtil)
+                    cardGroup.rotation.y += (rotY - cardGroup.rotation.y) * 0.05;
+                    cardGroup.rotation.x += (rotX - cardGroup.rotation.x) * 0.05;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
