@@ -6,129 +6,7 @@
     <title>Hub AG7 · réseaux sociaux</title>
     <!-- Font Awesome pour icônes pro -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0c0f;
-            color: white;
-        }
-        /* fond dynamique avec particules (canvas généré par js) */
-        #bg-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.5;
-        }
-        /* conteneur principal three.js (css3d) */
-        #scene-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none; /* les cartes deviennent cliquables via la gestion three */
-        }
-        /* style de base des cartes (seront appliqués via CSS3D) */
-        .card {
-            width: 240px;
-            height: 280px;
-            background: rgba(20, 25, 35, 0.75);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 28px;
-            border: 1px solid rgba(100, 150, 255, 0.2);
-            box-shadow: 0 25px 40px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(120, 180, 255, 0.15) inset, 0 0 30px rgba(0, 180, 255, 0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            color: white;
-            transition: filter 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            /* effet de reflet subtil */
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
-            will-change: transform, filter;
-        }
-        .card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 70%);
-            opacity: 0.4;
-            pointer-events: none;
-        }
-        .card i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 15px currentColor);
-            transition: transform 0.2s;
-        }
-        .card .network-name {
-            font-weight: 600;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-            background: linear-gradient(135deg, #fff, #b0c4ff);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .card .handle {
-            font-size: 1rem;
-            opacity: 0.8;
-            background: rgba(255,255,255,0.1);
-            padding: 6px 14px;
-            border-radius: 40px;
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.15);
-            margin-top: 10px;
-        }
-        /* couleurs spécifiques pour glow */
-        .card[data-network="facebook"] i { color: #1877f2; }
-        .card[data-network="instagram"] i { color: #e4405f; }
-        .card[data-network="tiktok"] i { color: #ffffff; text-shadow: 0 0 10px #69c9d0, 0 0 20px #ee1d52; }
-        .card[data-network="linkedin"] i { color: #0a66c2; }
-        .card[data-network="telegram"] i { color: #26a5e4; }
-        .card[data-network="whatsapp"] i { color: #25d366; }
-        .card[data-network="github"] i { color: #f5f5f5; }
-        .card[data-network="email"] i { color: #ea4335; }
-
-        /* flou et atténuation pour cartes éloignées (appliqué dynamiquement via js) */
-        .card.blurred {
-            filter: blur(2px) brightness(0.6);
-            opacity: 0.7;
-        }
-        .card.active {
-            filter: brightness(1.2) drop-shadow(0 0 25px rgba(0, 180, 255, 0.6));
-            border-color: rgba(100, 200, 255, 0.6);
-            box-shadow: 0 30px 50px -10px black, 0 0 0 2px rgba(100, 200, 255, 0.4) inset, 0 0 40px #00a6ff;
-        }
-        /* loader discret pour éviter FOUC */
-        .loading {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            color: rgba(255,255,255,0.3);
-            font-size: 0.8rem;
-            z-index: 10;
-            pointer-events: none;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
@@ -165,6 +43,7 @@
         let cardObjects = [];         // référence aux objets
         let currentIndex = 0;         // index actif (interpolé)
         let targetIndex = 0;
+        let lastActiveIndex = -1;     // optimisation : mise à jour classes seulement si index change
         let isAnimating = false;
         let wheelVelocity = 0;
         let lastWheelTime = performance.now();
@@ -240,9 +119,11 @@
                     }, 100);
                 });
                 
-                // gestion hover tilt (desktop)
+// gestion hover tilt (desktop) avec rafraîchissement throttlé
+                let tiltRequest = null;
                 div.addEventListener('mousemove', (e) => {
                     if (window.innerWidth < 768) return; // pas de tilt sur mobile
+
                     const rect = div.getBoundingClientRect();
                     const x = e.clientX - rect.left; // x position within the element
                     const y = e.clientY - rect.top;  // y position
@@ -250,15 +131,19 @@
                     const centerY = rect.height / 2;
                     const rotX = (y - centerY) / centerY * 8; // max 8 deg
                     const rotY = (centerX - x) / centerX * 8;
-                    // appliquer la rotation en plus de la rotation de base (gérée par le groupe)
-                    // on utilise une variable pour ne pas écraser la rotation de la scène
-                    // on stocke dans un dataset pour l'animation
-                    div.dataset.tiltX = rotX;
-                    div.dataset.tiltY = rotY;
-                    div.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+
+                    if (tiltRequest) cancelAnimationFrame(tiltRequest);
+                    tiltRequest = requestAnimationFrame(() => {
+                        div.dataset.tiltX = rotX;
+                        div.dataset.tiltY = rotY;
+                        div.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
+                        tiltRequest = null;
+                    });
                 });
-                
+
                 div.addEventListener('mouseleave', () => {
+                    if (tiltRequest) cancelAnimationFrame(tiltRequest);
+                    tiltRequest = null;
                     div.dataset.tiltX = 0;
                     div.dataset.tiltY = 0;
                     div.style.transform = ''; // revient à la rotation du groupe
@@ -275,18 +160,21 @@
         // --- mise à jour des positions/rotations en fonction de l'index actif ---
         function updateCardPositions(activeIndex) {
             const total = cardObjects.length;
+            const roundedActive = Math.round(activeIndex);
+            const activeChanged = roundedActive !== lastActiveIndex;
+
             cardObjects.forEach((obj, i) => {
                 // distance relative à l'index actif
                 const offset = i - activeIndex;
-                
+
                 // position X : les cartes sont espacées mais on recentre pour que l'active soit à x=0
                 const targetX = offset * SPACING;
-                
+
                 // position Z : les cartes éloignées reculent (négatif) et celles extrêmes un peu plus
                 // forme de U inversé: plus on s'éloigne, plus Z est négatif
                 const absOffset = Math.abs(offset);
                 const targetZ = -absOffset * DEPTH_FACTOR; // négatif = plus loin
-                
+
                 // rotation Y : les cartes sur les côtés pivotent vers l'intérieur
                 let targetRotY = 0;
                 if (offset < 0) {
@@ -296,30 +184,33 @@
                 }
                 // plus on est loin, plus la rotation est forte (optionnel)
                 targetRotY *= Math.min(absOffset, 1.5); // plafonner à 1.5*angle
-                
-                // mise à jour de la position/rotation avec interpolation fluide (optionnel ici mais on le fait en animate)
-                // on utilise lerp pour plus tard
+
                 obj.userData.targetPos = new THREE.Vector3(targetX, 0, targetZ);
                 obj.userData.targetRotY = targetRotY;
-                
-                // gestion du flou et de l'effet actif via classe CSS
-                const div = obj.element;
-                if (i === activeIndex) {
-                    div.classList.add('active');
-                    div.classList.remove('blurred');
-                } else {
-                    div.classList.remove('active');
-                    div.classList.add('blurred');
-                }
-                // flou plus prononcé selon distance
-                if (Math.abs(offset) >= 2) {
-                    div.style.filter = 'blur(3px) brightness(0.5)';
-                } else if (Math.abs(offset) === 1) {
-                    div.style.filter = 'blur(1.5px) brightness(0.7)';
-                } else {
-                    div.style.filter = ''; // actif géré par classe active
+
+                if (activeChanged) {
+                    const div = obj.element;
+                    if (i === roundedActive) {
+                        div.classList.add('active');
+                        div.classList.remove('blurred');
+                    } else {
+                        div.classList.remove('active');
+                        div.classList.add('blurred');
+                    }
+
+                    if (Math.abs(offset) >= 2) {
+                        div.style.filter = 'blur(3px) brightness(0.5)';
+                    } else if (Math.abs(offset) === 1) {
+                        div.style.filter = 'blur(1.5px) brightness(0.7)';
+                    } else {
+                        div.style.filter = '';
+                    }
                 }
             });
+
+            if (activeChanged) {
+                lastActiveIndex = roundedActive;
+            }
         }
 
         // --- animation loop (lerp vers cible) ---
@@ -378,8 +269,8 @@
         }
 
         // --- gestion tactile (swipe) ---
-        let touchStartX = 0;
-        let touchStartY = 0;
+        let touchStartX = null;
+        let touchStartY = null;
         let touchMoved = false;
         
         function onTouchStart(e) {
@@ -389,7 +280,7 @@
         }
         
         function onTouchMove(e) {
-            if (!touchStartX) return;
+            if (touchStartX === null || touchStartY === null) return;
             e.preventDefault();
             const dx = e.touches[0].clientX - touchStartX;
             const dy = e.touches[0].clientY - touchStartY;
@@ -410,8 +301,8 @@
                 // simuler un clic si pas de mouvement
                 // on laisse le clic natif sur la carte
             }
-            touchStartX = 0;
-            touchStartY = 0;
+            touchStartX = null;
+            touchStartY = null;
         }
 
         // --- redimensionnement ---
@@ -497,7 +388,10 @@
                     ctx.shadowBlur = 0;
                 });
                 
-                requestAnimationFrame(animateBg);
+                // limiter à ~30 fps dans le fond pour économiser ressources
+                setTimeout(() => {
+                    requestAnimationFrame(animateBg);
+                }, 1000 / 30);
             }
             
             window.addEventListener('resize', resize);
