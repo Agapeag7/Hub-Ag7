@@ -4,296 +4,288 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Hub AG7 · réseaux sociaux</title>
+    <!-- Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <link rel="website icon" type="png" href="ico/AG7.png">
     <style>
-        /* Responsive des cartes */
+        /* ---------- Base ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0c0f;
+            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .banner {
+            width: 100%;
+            height: 100vh;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+            background: radial-gradient(circle at center, #1a1f2c 0%, #0b0e14 100%);
+        }
+
+        /* ---------- Slider 3D (exactement comme l'exemple) ---------- */
+        .banner .slider {
+            position: absolute;
+            width: 240px;
+            height: 280px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transform-style: preserve-3d;
+            transform: perspective(1000px);
+            animation: autoRun 25s linear infinite;
+            z-index: 2;
+        }
+
+        @keyframes autoRun {
+            from {
+                transform: perspective(1000px) rotateX(-10deg) rotateY(0deg);
+            }
+            to {
+                transform: perspective(1000px) rotateX(-10deg) rotateY(360deg);
+            }
+        }
+
+        .banner .slider .item {
+            position: absolute;
+            inset: 0;
+            transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(550px);
+            border-radius: 24px;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s;
+        }
+
+        /* Style des cartes réseau social */
+        .card {
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 25, 35, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(120,180,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+            color: white;
+            transition: all 0.2s ease;
+            will-change: transform;
+        }
+
+        .card i {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .card .network-name {
+            font-weight: 700;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #fff, #b0c4ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .card .handle {
+            font-size: 0.85rem;
+            background: rgba(255,255,255,0.1);
+            padding: 5px 12px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Couleurs des icônes */
+        .card[data-network="facebook"] i { color: #1877f2; }
+        .card[data-network="instagram"] i { color: #e4405f; }
+        .card[data-network="tiktok"] i { color: #ffffff; text-shadow: 0 0 8px #69c9d0; }
+        .card[data-network="linkedin"] i { color: #0a66c2; }
+        .card[data-network="telegram"] i { color: #26a5e4; }
+        .card[data-network="x"] i { color: #ffffff; }
+        .card[data-network="whatsapp"] i { color: #25d366; }
+        .card[data-network="github"] i { color: #f5f5f5; }
+        .card[data-network="email"] i { color: #ea4335; }
+        .card[data-network="threads"] i { color: #ffffff; }
+        .card[data-network="pinterest"] i { color: #c8232c; }
+
+        /* Effet hover (zoom léger) */
+        .banner .slider .item:hover {
+            transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(580px) scale(1.02);
+            z-index: 10;
+        }
+
+        /* ---------- Responsive : mobile ---------- */
         @media (max-width: 768px) {
+            .banner .slider {
+                width: 140px;
+                height: 170px;
+                top: 55%;
+            }
+            .banner .slider .item {
+                transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(320px);
+            }
             .card {
-                width: 160px !important;
-                height: 190px !important;
-                padding: 12px !important;
+                padding: 12px;
             }
             .card i {
-                font-size: 2.5rem !important;
-                margin-bottom: 10px;
+                font-size: 2rem;
+                margin-bottom: 8px;
             }
             .card .network-name {
-                font-size: 1.2rem !important;
+                font-size: 0.9rem;
             }
             .card .handle {
-                font-size: 0.75rem !important;
-                padding: 4px 8px;
+                font-size: 0.6rem;
+                padding: 3px 8px;
             }
+            @keyframes autoRun {
+                from { transform: perspective(800px) rotateX(-6deg) rotateY(0deg); }
+                to   { transform: perspective(800px) rotateX(-6deg) rotateY(360deg); }
+            }
+        }
+
+        /* ---------- Texte d'information ---------- */
+        .info {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            z-index: 10;
+            pointer-events: none;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
-    <div id="scene-container"></div>
-    <div class="loading">↻ scroll / swipe ↻</div>
+<div class="banner">
+    <!-- Slider circulaire 3D : 11 cartes -->
+    <div class="slider" style="--quantity: 11">
+        <!-- Facebook -->
+        <div class="item" style="--position: 1">
+            <div class="card" data-network="facebook" data-link="https://www.facebook.com/profile.php?id=100077852277023">
+                <i class="fab fa-facebook"></i>
+                <span class="network-name">Facebook</span>
+                <span class="handle">@agape_ag7</span>
+            </div>
+        </div>
+        <!-- Instagram -->
+        <div class="item" style="--position: 2">
+            <div class="card" data-network="instagram" data-link="https://www.instagram.com/agap_mh?igsh=Zm04OGFkNmliMHJq">
+                <i class="fab fa-instagram"></i>
+                <span class="network-name">Instagram</span>
+                <span class="handle">@agap_mh</span>
+            </div>
+        </div>
+        <!-- TikTok -->
+        <div class="item" style="--position: 3">
+            <div class="card" data-network="tiktok" data-link="https://tiktok.com/@ag7_fx">
+                <i class="fab fa-tiktok"></i>
+                <span class="network-name">TikTok</span>
+                <span class="handle">@ag7_fx</span>
+            </div>
+        </div>
+        <!-- LinkedIn -->
+        <div class="item" style="--position: 4">
+            <div class="card" data-network="linkedin" data-link="https://www.linkedin.com/in/agape-ag7-9605bb378">
+                <i class="fab fa-linkedin"></i>
+                <span class="network-name">LinkedIn</span>
+                <span class="handle">@agape_ag7</span>
+            </div>
+        </div>
+        <!-- Telegram -->
+        <div class="item" style="--position: 5">
+            <div class="card" data-network="telegram" data-link="https://t.me/Ag7_mhy">
+                <i class="fab fa-telegram"></i>
+                <span class="network-name">Telegram</span>
+                <span class="handle">@ag7_mhy</span>
+            </div>
+        </div>
+        <!-- X (Twitter) -->
+        <div class="item" style="--position: 6">
+            <div class="card" data-network="x" data-link="https://x.com/AgapeAg7">
+                <i class="fab fa-x-twitter"></i>
+                <span class="network-name">X</span>
+                <span class="handle">@AgapeAg7</span>
+            </div>
+        </div>
+        <!-- WhatsApp -->
+        <div class="item" style="--position: 7">
+            <div class="card" data-network="whatsapp" data-link="https://wa.me/254106097625">
+                <i class="fab fa-whatsapp"></i>
+                <span class="network-name">WhatsApp</span>
+                <span class="handle">+254106097625</span>
+            </div>
+        </div>
+        <!-- GitHub -->
+        <div class="item" style="--position: 8">
+            <div class="card" data-network="github" data-link="https://github.com/Agapeag7">
+                <i class="fab fa-github"></i>
+                <span class="network-name">GitHub</span>
+                <span class="handle">@ag7</span>
+            </div>
+        </div>
+        <!-- Email -->
+        <div class="item" style="--position: 9">
+            <div class="card" data-network="email" data-link="mailto:agapeag7@gmail.com">
+                <i class="fas fa-envelope"></i>
+                <span class="network-name">Email</span>
+                <span class="handle">agapeag7@gmail.com</span>
+            </div>
+        </div>
+        <!-- Threads -->
+        <div class="item" style="--position: 10">
+            <div class="card" data-network="threads" data-link="https://www.threads.com/@agap_mh">
+                <i class="fab fa-threads"></i>
+                <span class="network-name">Threads</span>
+                <span class="handle">@agap_mh</span>
+            </div>
+        </div>
+        <!-- Pinterest -->
+        <div class="item" style="--position: 11">
+            <div class="card" data-network="pinterest" data-link="https://pin.it/1SHyVValE">
+                <i class="fab fa-pinterest"></i>
+                <span class="network-name">Pinterest</span>
+                <span class="handle">@ag7</span>
+            </div>
+        </div>
+    </div>
 
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+    <!-- Petit texte informatif -->
+    <div class="info">↻ rotation automatique | cliquez sur une carte ↻</div>
+</div>
+
+<script>
+    // Gestion des clics sur les cartes
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const link = card.getAttribute('data-link');
+            if (link) {
+                // petite animation visuelle
+                card.style.transform = 'scale(0.97)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 150);
+                setTimeout(() => {
+                    window.open(link, '_blank');
+                }, 100);
             }
-        }
-    </script>
-    <script type="module">
-        import * as THREE from 'three';
-        import { CSS3DRenderer, CSS3DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
-
-        // --- 11 réseaux ---
-        const CARDS = [
-            { network: 'facebook',   icon: 'fab fa-facebook',   handle: '@agape_ag7',   link: 'https://www.facebook.com/profile.php?id=100077852277023', color: '#1877f2' },
-            { network: 'instagram',  icon: 'fab fa-instagram',  handle: '@agap_mh',     link: 'https://www.instagram.com/agap_mh?igsh=Zm04OGFkNmliMHJq', color: '#e4405f' },
-            { network: 'tiktok',     icon: 'fab fa-tiktok',     handle: '@ag7_fx',     link: 'https://tiktok.com/@ag7_fx', color: '#ffffff' },
-            { network: 'linkedin',   icon: 'fab fa-linkedin',   handle: '@agape_ag7',  link: 'https://www.linkedin.com/in/agape-ag7-9605bb378', color: '#0a66c2' },
-            { network: 'telegram',   icon: 'fab fa-telegram',   handle: '@ag7_mhy',    link: 'https://t.me/Ag7_mhy', color: '#26a5e4' },
-            { network: 'x',          icon: 'fab fa-x-twitter',  handle: '@AgapeAg7',   link: 'https://x.com/AgapeAg7', color: '#000000' },
-            { network: 'whatsapp',   icon: 'fab fa-whatsapp',   handle: '+254106097625', link: 'https://wa.me/254106097625', color: '#25d366' },
-            { network: 'github',     icon: 'fab fa-github',     handle: '@ag7',        link: 'https://github.com/Agapeag7', color: '#f5f5f5' },
-            { network: 'email',      icon: 'fas fa-envelope',   handle: 'agapeag7@gmail.com', link: 'mailto:agapeag7@gmail.com', color: '#ea4335' },
-            { network: 'threads',    icon: 'fab fa-threads',    handle: '@agap_mh',    link: 'https://www.threads.com/@agap_mh', color: '#1d1d1d' },
-            { network: 'pinterest',  icon: 'fab fa-pinterest',  handle: '@ag7',        link: 'https://pin.it/1SHyVValE', color: '#c8232c' }
-        ];
-
-        let scene, camera, renderer;
-        let cardGroup;
-        let cardObjects = [];
-
-        // Paramètres responsives
-        let currentRadius = 480;
-        let cameraZ = 1100;
-        let cameraY = 120;
-
-        // Gestion de la rotation (inertie)
-        let targetRotationY = 0;
-        let currentRotationY = 0;
-        let wheelVelocity = 0;
-        const FRICTION = 0.93;
-        const WHEEL_FACTOR = 0.008;
-        const TOUCH_FACTOR = 0.012;
-
-        function updateResponsive() {
-            const isMobile = window.innerWidth < 768;
-            if (isMobile) {
-                currentRadius = 280;
-                cameraZ = 700;
-                cameraY = 50;
-            } else {
-                currentRadius = 480;
-                cameraZ = 1100;
-                cameraY = 120;
-            }
-        }
-
-        function init() {
-            scene = new THREE.Scene();
-            updateResponsive();
-            
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
-            camera.position.set(0, cameraY, cameraZ);
-            camera.lookAt(0, 0, 0);
-            
-            renderer = new CSS3DRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.domElement.style.position = 'fixed';
-            renderer.domElement.style.top = '0';
-            renderer.domElement.style.left = '0';
-            renderer.domElement.style.pointerEvents = 'auto';
-            document.getElementById('scene-container').appendChild(renderer.domElement);
-            
-            cardGroup = new THREE.Group();
-            scene.add(cardGroup);
-            
-            createCardsOnCircle();
-            animate();
-            
-            // Événements
-            window.addEventListener('wheel', onWheel, { passive: false });
-            window.addEventListener('resize', onResize);
-            
-            // Gestion tactile
-            let touchStartX = 0;
-            let touchMoved = false;
-            window.addEventListener('touchstart', (e) => {
-                touchStartX = e.touches[0].clientX;
-                touchMoved = false;
-            });
-            window.addEventListener('touchmove', (e) => {
-                if (touchStartX === undefined) return;
-                e.preventDefault();
-                const dx = e.touches[0].clientX - touchStartX;
-                if (Math.abs(dx) > 5) touchMoved = true;
-                const delta = dx * TOUCH_FACTOR;
-                targetRotationY += delta;
-                wheelVelocity = delta / 2;
-                touchStartX = e.touches[0].clientX;
-            });
-            window.addEventListener('touchend', () => {
-                touchStartX = undefined;
-            });
-        }
-        
-        function createCardsOnCircle() {
-            const count = CARDS.length;
-            CARDS.forEach((item, index) => {
-                const div = document.createElement('div');
-                div.className = 'card';
-                div.setAttribute('data-network', item.network);
-                div.setAttribute('data-link', item.link);
-                div.setAttribute('data-index', index);
-                div.innerHTML = `
-                    <i class="${item.icon}"></i>
-                    <span class="network-name">${item.network.charAt(0).toUpperCase() + item.network.slice(1)}</span>
-                    <span class="handle">${item.handle}</span>
-                `;
-                
-                div.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const link = div.getAttribute('data-link');
-                    div.style.transform = 'scale(0.95) translateZ(-30px)';
-                    setTimeout(() => { div.style.transform = ''; }, 150);
-                    setTimeout(() => { window.open(link, '_blank'); }, 100);
-                });
-                
-                // Tilt desktop uniquement
-                if (window.innerWidth >= 768) {
-                    let tiltRequest = null;
-                    div.addEventListener('mousemove', (e) => {
-                        const rect = div.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        const centerX = rect.width/2;
-                        const centerY = rect.height/2;
-                        const rotX = (y - centerY)/centerY * 8;
-                        const rotY = (centerX - x)/centerX * 8;
-                        if (tiltRequest) cancelAnimationFrame(tiltRequest);
-                        tiltRequest = requestAnimationFrame(() => {
-                            div.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
-                            tiltRequest = null;
-                        });
-                    });
-                    div.addEventListener('mouseleave', () => {
-                        if (tiltRequest) cancelAnimationFrame(tiltRequest);
-                        tiltRequest = null;
-                        div.style.transform = '';
-                    });
-                }
-                
-                const angle = (index / count) * Math.PI * 2;
-                const x = Math.cos(angle) * currentRadius;
-                const z = Math.sin(angle) * currentRadius;
-                const cssObj = new CSS3DObject(div);
-                cssObj.position.set(x, 0, z);
-                cssObj.lookAt(0, 0, 0);
-                cardGroup.add(cssObj);
-                cardObjects.push(cssObj);
-            });
-        }
-        
-        function onWheel(e) {
-            e.preventDefault();
-            const delta = e.deltaY * WHEEL_FACTOR;
-            wheelVelocity += delta;
-            targetRotationY += delta;
-            // Limites de vélocité
-            wheelVelocity = Math.max(-0.5, Math.min(0.5, wheelVelocity));
-        }
-        
-        function onResize() {
-            updateResponsive();
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.position.set(0, cameraY, cameraZ);
-            camera.lookAt(0, 0, 0);
-            // Reconstruire le cercle si le rayon a changé
-            if (cardGroup && currentRadius !== cardGroup.userData?.lastRadius) {
-                while(cardGroup.children.length) cardGroup.remove(cardGroup.children[0]);
-                cardObjects = [];
-                createCardsOnCircle();
-                cardGroup.userData = { lastRadius: currentRadius };
-            } else if (!cardGroup.userData) {
-                cardGroup.userData = { lastRadius: currentRadius };
-            }
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Inertie
-            if (Math.abs(wheelVelocity) > 0.001) {
-                targetRotationY += wheelVelocity;
-                wheelVelocity *= FRICTION;
-            }
-            
-            // Interpolation douce pour suivre la cible
-            currentRotationY += (targetRotationY - currentRotationY) * 0.12;
-            cardGroup.rotation.y = currentRotationY;
-            
-            renderer.render(scene, camera);
-        }
-        
-        // --- Fond à particules ---
-        function initBackground() {
-            const canvas = document.getElementById('bg-canvas');
-            const ctx = canvas.getContext('2d');
-            let width, height;
-            let particles = [];
-            
-            function resize() {
-                width = window.innerWidth;
-                height = window.innerHeight;
-                canvas.width = width;
-                canvas.height = height;
-                particles = [];
-                for (let i = 0; i < 45; i++) {
-                    particles.push({
-                        x: Math.random() * width,
-                        y: Math.random() * height,
-                        size: Math.random() * 2 + 1,
-                        speed: 0.02 + Math.random() * 0.03,
-                        color: `rgba(100, 150, 255, ${0.2 + Math.random()*0.3})`
-                    });
-                }
-            }
-            
-            function animateBg() {
-                ctx.clearRect(0, 0, width, height);
-                const gradient = ctx.createLinearGradient(0, 0, width, height);
-                gradient.addColorStop(0, '#0b0e14');
-                gradient.addColorStop(1, '#1a1f2c');
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, width, height);
-                
-                particles.forEach(p => {
-                    p.y += p.speed * 0.5;
-                    if (p.y > height) p.y = 0;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.fill();
-                    ctx.shadowColor = '#00a6ff';
-                    ctx.shadowBlur = 8;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                });
-                setTimeout(() => requestAnimationFrame(animateBg), 1000/30);
-            }
-            
-            window.addEventListener('resize', resize);
-            resize();
-            animateBg();
-        }
-        
-        window.addEventListener('load', () => {
-            initBackground();
-            init();
         });
-    </script>
+    });
+</script>
 </body>
 </html>
