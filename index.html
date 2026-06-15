@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Hub AG7 · réseaux sociaux</title>
-    <!-- Font Awesome pour icônes pro -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="website icon" type="png" href="ico/AG7.png">
@@ -12,9 +12,8 @@
 <body>
     <canvas id="bg-canvas"></canvas>
     <div id="scene-container"></div>
-    <div class="loading">scroll · explore</div>
+    <div class="loading">✨ rotation continue ✨</div>
 
-    <!-- Three.js et CSS3DRenderer -->
     <script type="importmap">
         {
             "imports": {
@@ -26,7 +25,7 @@
         import * as THREE from 'three';
         import { CSS3DRenderer, CSS3DObject } from 'https://unpkg.com/three@0.128.0/examples/jsm/renderers/CSS3DRenderer.js';
 
-        // --- configuration ---
+        // --- Liste des réseaux (inchangée) ---
         const CARDS = [
             { network: 'facebook',   icon: 'fab fa-facebook',   handle: '@agape_ag7',   link: 'https://www.facebook.com/profile.php?id=100077852277023', color: '#1877f2' },
             { network: 'instagram',  icon: 'fab fa-instagram',  handle: '@agap_mh',   link: 'https://www.instagram.com/agap_mh?igsh=Zm04OGFkNmliMHJq', color: '#e4405f' },
@@ -41,297 +40,138 @@
             { network: 'pinterest',  icon: 'fab fa-pinterest',  handle: '@ag7',  link: 'https://pin.it/1SHyVValE', color: '#c8232c' }
         ];
 
-        // --- variables globales ---
-        let scene, camera, renderer;
-        let cardGroup;               // groupe contenant tous les objets CSS3D
-        let cardObjects = [];         // référence aux objets
-        let currentIndex = 0;         // index actif (interpolé)
-        let targetIndex = 0;
-        let lastActiveIndex = -1;     // optimisation : mise à jour classes seulement si index change
-        let isAnimating = false;
-        let wheelVelocity = 0;
-        let lastWheelTime = performance.now();
+        // --- Configuration du cercle ---
+        const RADIUS = 480;          // Rayon du cercle (distance au centre)
+        const CARD_COUNT = CARDS.length;
         
-        // paramètres de disposition 3D
-        const CARD_WIDTH = 240;
-        const CARD_HEIGHT = 280;
-        const SPACING = 300;          // distance entre centres sur l'axe X
-        const DEPTH_FACTOR = 350;      // amplitude du décalage Z
-        const ROTATION_ANGLE = 0.5;     // radians max pour rotation Y
+        // Variables Three.js
+        let scene, camera, renderer;
+        let cardGroup;               // Groupe qui va tourner
+        let cardObjects = [];
 
-        // --- initialisation Three.js avec CSS3DRenderer ---
-        function initScene() {
+        // --- Initialisation ---
+        function init() {
             scene = new THREE.Scene();
             
-            // caméra perspective
+            // Caméra : position légèrement surélevée et reculée
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 5000);
-            camera.position.set(0, 0, 1200); // reculée pour voir l'ensemble
+            camera.position.set(0, 120, 1100);
             camera.lookAt(0, 0, 0);
             
-            // renderer CSS3D
             renderer = new CSS3DRenderer();
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.domElement.style.position = 'fixed';
             renderer.domElement.style.top = '0';
             renderer.domElement.style.left = '0';
-            renderer.domElement.style.pointerEvents = 'none'; // on gère les events via les cartes elles-mêmes
+            renderer.domElement.style.pointerEvents = 'auto';
             document.getElementById('scene-container').appendChild(renderer.domElement);
             
-            // groupe des cartes
+            // Groupe principal (tournera)
             cardGroup = new THREE.Group();
             scene.add(cardGroup);
             
-            // création des cartes
-            createCards();
+            createCardsOnCircle();
             
-            // position initiale
-            updateCardPositions(currentIndex);
-            
-            // ajout d'une lumière ambiante (pas nécessaire pour CSS3D mais pour le fond)
-            // rien à faire
+            animate();
         }
-
-        // --- création des éléments HTML et conversion en CSS3DObject ---
-        function createCards() {
+        
+        // --- Création des cartes disposées en cercle ---
+        function createCardsOnCircle() {
             CARDS.forEach((item, index) => {
-                // créer la div de la carte
+                // Création de la div (identique à l'original)
                 const div = document.createElement('div');
                 div.className = 'card';
                 div.setAttribute('data-network', item.network);
                 div.setAttribute('data-link', item.link);
                 div.setAttribute('data-index', index);
-                
-                // contenu HTML
                 div.innerHTML = `
                     <i class="${item.icon}"></i>
                     <span class="network-name">${item.network.charAt(0).toUpperCase() + item.network.slice(1)}</span>
                     <span class="handle">${item.handle}</span>
                 `;
                 
-                // gestion du clic (ouvrir le lien)
+                // Clic
                 div.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const link = div.getAttribute('data-link');
-                    // petite animation "push" en profondeur
                     div.style.transform = 'scale(0.95) translateZ(-30px)';
                     setTimeout(() => {
                         div.style.transform = '';
                     }, 150);
-                    // ouverture après un court délai pour voir l'animation
                     setTimeout(() => {
                         window.open(link, '_blank');
                     }, 100);
                 });
                 
-// gestion hover tilt (desktop) avec rafraîchissement throttlé
+                // Effet tilt au survol (conservé)
                 let tiltRequest = null;
                 div.addEventListener('mousemove', (e) => {
-                    if (window.innerWidth < 768) return; // pas de tilt sur mobile
-
+                    if (window.innerWidth < 768) return;
                     const rect = div.getBoundingClientRect();
-                    const x = e.clientX - rect.left; // x position within the element
-                    const y = e.clientY - rect.top;  // y position
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    const rotX = (y - centerY) / centerY * 8; // max 8 deg
+                    const rotX = (y - centerY) / centerY * 8;
                     const rotY = (centerX - x) / centerX * 8;
-
                     if (tiltRequest) cancelAnimationFrame(tiltRequest);
                     tiltRequest = requestAnimationFrame(() => {
-                        div.dataset.tiltX = rotX;
-                        div.dataset.tiltY = rotY;
                         div.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
                         tiltRequest = null;
                     });
                 });
-
                 div.addEventListener('mouseleave', () => {
                     if (tiltRequest) cancelAnimationFrame(tiltRequest);
                     tiltRequest = null;
-                    div.dataset.tiltX = 0;
-                    div.dataset.tiltY = 0;
-                    div.style.transform = ''; // revient à la rotation du groupe
+                    div.style.transform = '';
                 });
                 
-                // créer l'objet CSS3D
-                const cssObject = new CSS3DObject(div);
-                cssObject.position.set(index * SPACING, 0, 0); // placement temporaire, sera écrasé
-                cardGroup.add(cssObject);
-                cardObjects.push(cssObject);
+                // --- Position sur le cercle ---
+                const angle = (index / CARD_COUNT) * Math.PI * 2;
+                const x = Math.cos(angle) * RADIUS;
+                const z = Math.sin(angle) * RADIUS;
+                const y = 0; // toutes à la même hauteur (on peut ajouter une légère inclinaison si souhaité)
+                
+                const cssObj = new CSS3DObject(div);
+                cssObj.position.set(x, y, z);
+                // Faire face au centre : regarder vers (0,0,0)
+                cssObj.lookAt(0, y, 0);
+                
+                cardGroup.add(cssObj);
+                cardObjects.push(cssObj);
             });
         }
-
-        // --- mise à jour des positions/rotations en fonction de l'index actif ---
-        function updateCardPositions(activeIndex) {
-            const total = cardObjects.length;
-            const roundedActive = Math.round(activeIndex);
-            const activeChanged = roundedActive !== lastActiveIndex;
-
-            cardObjects.forEach((obj, i) => {
-                // distance relative à l'index actif
-                const offset = i - activeIndex;
-
-                // position X : les cartes sont espacées mais on recentre pour que l'active soit à x=0
-                const targetX = offset * SPACING;
-
-                // position Z : les cartes éloignées reculent (négatif) et celles extrêmes un peu plus
-                // forme de U inversé: plus on s'éloigne, plus Z est négatif
-                const absOffset = Math.abs(offset);
-                const targetZ = -absOffset * DEPTH_FACTOR; // négatif = plus loin
-
-                // rotation Y : les cartes sur les côtés pivotent vers l'intérieur
-                let targetRotY = 0;
-                if (offset < 0) {
-                    targetRotY = ROTATION_ANGLE; // carte à gauche tournée vers la droite
-                } else if (offset > 0) {
-                    targetRotY = -ROTATION_ANGLE; // carte à droite tournée vers la gauche
-                }
-                // plus on est loin, plus la rotation est forte (optionnel)
-                targetRotY *= Math.min(absOffset, 1.5); // plafonner à 1.5*angle
-
-                obj.userData.targetPos = new THREE.Vector3(targetX, 0, targetZ);
-                obj.userData.targetRotY = targetRotY;
-
-                if (activeChanged) {
-                    const div = obj.element;
-                    if (i === roundedActive) {
-                        div.classList.add('active');
-                        div.classList.remove('blurred');
-                    } else {
-                        div.classList.remove('active');
-                        div.classList.add('blurred');
-                    }
-
-                    if (Math.abs(offset) >= 2) {
-                        div.style.filter = 'blur(1.2px) brightness(0.78)';
-                    } else if (Math.abs(offset) === 1) {
-                        div.style.filter = 'blur(0.7px) brightness(0.86)';
-                    } else {
-                        div.style.filter = '';
-                    }
-                }
-            });
-
-            if (activeChanged) {
-                lastActiveIndex = roundedActive;
-            }
-        }
-
-        // --- animation loop (lerp vers cible) ---
+        
+        // --- Animation : rotation continue du groupe ---
+        let rotationSpeed = 0.005;    // radians par frame (~0.3 rad/s à 60fps) → tour complet en ~20s
+        let autoRotate = true;
+        
         function animate() {
             requestAnimationFrame(animate);
             
-            // interpolation douce des positions/rotations des cartes
-            const lerpFactor = 0.1;
-            cardObjects.forEach(obj => {
-                if (obj.userData.targetPos) {
-                    // position
-                    obj.position.lerp(obj.userData.targetPos, lerpFactor);
-                    // rotation Y
-                    const rotY = obj.rotation.y;
-                    const targetRotY = obj.userData.targetRotY || 0;
-                    obj.rotation.y += (targetRotY - rotY) * lerpFactor;
-                }
-            });
-            
-            // effet de parallax subtil du fond selon l'index actif (bouger la caméra ou le groupe)
-            // camera.position.x = currentIndex * 5; // trop brutal, garder la caméra fixe
-            
-            // inertie du scroll
-            if (Math.abs(wheelVelocity) > 0.01) {
-                targetIndex += wheelVelocity;
-                // clamping
-                targetIndex = Math.max(0, Math.min(CARDS.length - 1, targetIndex));
-                wheelVelocity *= 0.92; // friction
-                if (Math.abs(wheelVelocity) < 0.001) wheelVelocity = 0;
+            if (autoRotate) {
+                cardGroup.rotation.y += rotationSpeed;
             }
             
-            // faire tendre currentIndex vers targetIndex
-            const diff = targetIndex - currentIndex;
-            currentIndex += diff * 0.15;
-            if (Math.abs(diff) < 0.001) currentIndex = targetIndex;
-            updateCardPositions(currentIndex);
+            // Petit effet de parallax sur la caméra (optionnel)
+            // camera.position.x += (0 - camera.position.x) * 0.05;
             
             renderer.render(scene, camera);
         }
-
-        // --- gestion du scroll (wheel) ---
-        function onWheel(e) {
-            if (e.ctrlKey || e.metaKey) return; // laisser les raccourcis (zoom) tranquilles
-            e.preventDefault();
-            const delta = (e.deltaY || -e.wheelDelta || 0) * 0.0013; // sensibilité ajustée pour moins de sauts
-            wheelVelocity += delta;
-            // limiter vélocité
-            wheelVelocity = Math.max(-0.45, Math.min(0.45, wheelVelocity));
-            lastWheelTime = performance.now();
-        }
-
-        function clamp(value, min, max) {
-            return Math.max(min, Math.min(max, value));
-        }
-
-        // --- gestion tactile (swipe) ---
-        let touchStartX = null;
-        let touchStartY = null;
-        let touchMoved = false;
         
-        function onTouchStart(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchMoved = false;
-        }
-        
-        function onTouchMove(e) {
-            if (touchStartX === null || touchStartY === null) return;
-            e.preventDefault();
-            const currentX = e.touches[0].clientX;
-            const dx = currentX - touchStartX;
-            const dy = e.touches[0].clientY - touchStartY;
-
-            if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
-                touchMoved = true;
-            } else {
-                return;
-            }
-
-            // Mouvement horizontal contrôlé, lissage et clamp pour ne pas trop sauter
-            const normalized = clamp(dx / window.innerWidth, -0.25, 0.25);
-            targetIndex += -normalized * 0.8; // swipe gauche = index ++
-            targetIndex = clamp(targetIndex, 0, CARDS.length - 1);
-
-            // inertie plus douce en tactile (sur une même interaction)
-            wheelVelocity = clamp(wheelVelocity + (-normalized * 0.18), -0.35, 0.35);
-            lastWheelTime = performance.now();
-
-            touchStartX = currentX;
-            touchStartY = e.touches[0].clientY;
-        }
-
-        function onTouchEnd(e) {
-            if (touchMoved) {
-                targetIndex = Math.round(targetIndex);
-                wheelVelocity = 0;
-            }
-            touchStartX = null;
-            touchStartY = null;
-            touchMoved = false;
-        }
-
-        // --- redimensionnement ---
+        // --- Gestion du redimensionnement ---
         function onResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            // ajuster la distance caméra si besoin
             if (window.innerWidth < 768) {
-                camera.position.z = 1000;
+                camera.position.z = 950;
             } else {
-                camera.position.z = 1200;
+                camera.position.z = 1100;
             }
         }
-
-        // --- fond de particules (canvas 2D) ---
+        
+        // --- Fond à particules (inchangé) ---
         function initBackground() {
             const canvas = document.getElementById('bg-canvas');
             const ctx = canvas.getContext('2d');
@@ -348,12 +188,11 @@
             
             function initParticles() {
                 particles = [];
-                const count = 45; // moins de particules pour alléger le rendu
+                const count = 45;
                 for (let i = 0; i < count; i++) {
                     particles.push({
                         x: Math.random() * width,
                         y: Math.random() * height,
-                        z: Math.random() * 200 - 100,
                         size: Math.random() * 2 + 1,
                         speed: 0.02 + Math.random() * 0.03,
                         color: `rgba(100, 150, 255, ${0.2 + Math.random()*0.3})`
@@ -363,97 +202,43 @@
             
             function animateBg() {
                 ctx.clearRect(0, 0, width, height);
-                
-                // dégradé de fond
                 const gradient = ctx.createLinearGradient(0, 0, width, height);
                 gradient.addColorStop(0, '#0b0e14');
                 gradient.addColorStop(1, '#1a1f2c');
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, width, height);
                 
-                // lignes géométriques subtiles
-                ctx.strokeStyle = 'rgba(60, 130, 240, 0.1)';
-                ctx.lineWidth = 1;
-                for (let i = 0; i < 10; i++) {
-                    ctx.beginPath();
-                    ctx.moveTo(i * width/10, 0);
-                    ctx.lineTo(i * width/10 + 50, height);
-                    ctx.strokeStyle = `rgba(80, 160, 255, ${0.03})`;
-                    ctx.stroke();
-                }
-                
-                // particules
                 particles.forEach(p => {
-                    // mouvement lent vertical
                     p.y += p.speed * 0.5;
                     if (p.y > height) p.y = 0;
-                    
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                     ctx.fillStyle = p.color;
                     ctx.fill();
-                    
-                    // effet de lueur
                     ctx.shadowColor = '#00a6ff';
                     ctx.shadowBlur = 8;
                     ctx.fill();
                     ctx.shadowBlur = 0;
                 });
-                
-                // limiter à ~30 fps dans le fond pour économiser ressources
-                setTimeout(() => {
-                    requestAnimationFrame(animateBg);
-                }, 1000 / 30);
+                setTimeout(() => requestAnimationFrame(animateBg), 1000 / 30);
             }
             
             window.addEventListener('resize', resize);
             resize();
             animateBg();
         }
-
-        // --- initialisation complète ---
+        
+        // --- Lancement ---
         window.addEventListener('load', () => {
             initBackground();
-            initScene();
-            
-            // événements
-            window.addEventListener('wheel', onWheel, { passive: false });
-            window.addEventListener('touchstart', onTouchStart, { passive: false });
-            window.addEventListener('touchmove', onTouchMove, { passive: false });
-            window.addEventListener('touchend', onTouchEnd);
+            init();
             window.addEventListener('resize', onResize);
             
-            // démarrage animation
-            animate();
-            
-            // petit effet de floating léger au repos (optionnel)
-            setInterval(() => {
-                if (Math.abs(wheelVelocity) < 0.01 && performance.now() - lastWheelTime > 2000) {
-                    // oscillation très légère et peu fréquente pour réduire charge
-                    cardObjects.forEach((obj, i) => {
-                        if (obj.userData.targetRotY !== undefined) {
-                            const float = Math.sin(Date.now() * 0.001 + i) * 0.005;
-                            obj.rotation.y += float;
-                        }
-                    });
-                }
-            }, 250);
+            // Option : arrêter la rotation au survol de la zone (décommentez si voulu)
+            // const container = document.getElementById('scene-container');
+            // container.addEventListener('mouseenter', () => autoRotate = false);
+            // container.addEventListener('mouseleave', () => autoRotate = true);
         });
-
-        // --- petite aide pour le gyroscope (mobile) ---
-        if (window.DeviceOrientationEvent) {
-            window.addEventListener('deviceorientation', (event) => {
-                // optionnel : faire bouger le fond ou l'orientation de la caméra très légèrement
-                if (window.innerWidth < 768 && event.beta && event.gamma) {
-                    // beta: -180 à 180 (avant/arrière), gamma: -90 à 90 (gauche/droite)
-                    const rotY = (event.gamma || 0) * 0.02; // faible amplitude
-                    const rotX = (event.beta || 0) * 0.01;
-                    // appliquer au groupe pour effet de parallax (très subtil)
-                    cardGroup.rotation.y += (rotY - cardGroup.rotation.y) * 0.05;
-                    cardGroup.rotation.x += (rotX - cardGroup.rotation.x) * 0.05;
-                }
-            });
-        }
     </script>
 </body>
 </html>
