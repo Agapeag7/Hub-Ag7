@@ -1,10 +1,13 @@
+- indication ARIA pour les cartes cliquables
+- Pas de logo, pas de titre principal (le hub s’appelle "Hub AG7" mais le nom n’apparaît pas visuellement).
+- Pas de pied de page ou d’informations supplémentaires.
+- Le slider tourne en continu, mais l’utilisateur ne peut pas le contrôler (pas de pause au survol, pas de boutons).
 
-
-Correction appliquée : défilement des palettes (réseaux) fonctionnel
-
-geste tactile pour qu’une touche donne un seul mouvement contrôl
-
-"Une seule fois, tout défile ensemble" :
-touchmove est maintenant limité, et un swipe simple fait un mouvement gradué / plus précis.
-
-<div class="slider" style="--quantity: 11">
+- Sur mobile, le clic est parfois absorbé par la rotation (mais le gestionnaire fonctionne).
+- Utiliser transform: translateZ() avec des valeurs moins extrêmes pour réduire les artefacts.
+- Ajouter un aria-label avec le nom du réseau.
+- Ajouter un target="_blank" rel="noopener noreferrer" pour la sécurité.
+- Thème sombre/clair : permettre à l’utilisateur de basculer.
+- Partage rapide : un bouton pour copier le lien du réseau.
+- Prévisualisation : afficher un aperçu du profil au survol (tooltip).
+- Le slider tourne en continu, mais l’utilisateur ne peut pas le contrôler
