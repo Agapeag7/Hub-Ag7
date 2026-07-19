@@ -28,6 +28,7 @@
             --about-card-border: rgba(255,255,255,0.06);
             --about-shadow: 0 20px 40px -12px rgba(0,0,0,0.5);
             --about-title-color: #b0c4ff;
+            --controls-bg: rgba(255,255,255,0.05);
         }
 
         body.light-theme {
@@ -45,6 +46,7 @@
             --about-card-border: rgba(0,0,0,0.08);
             --about-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
             --about-title-color: #3a4a7a;
+            --controls-bg: rgba(0,0,0,0.03);
         }
 
         /* ---------- Base ---------- */
@@ -62,14 +64,18 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* ---------- Bannière (slider) ---------- */
         .banner {
             width: 100%;
-            height: 100vh;
+            min-height: 80vh;
             text-align: center;
             overflow: hidden;
             position: relative;
             background: var(--bg-banner);
             transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* ---------- En-tête ---------- */
@@ -109,17 +115,14 @@
 
         /* ---------- Slider 3D ---------- */
         .banner .slider {
-            position: absolute;
             width: 240px;
             height: 280px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             transform-style: preserve-3d;
             transform: perspective(1000px);
             animation: autoRun 25s linear infinite;
             z-index: 2;
             transition: animation-play-state 0.3s;
+            position: relative;
         }
         .banner .slider:hover {
             animation-play-state: paused;
@@ -278,28 +281,29 @@
             z-index: 10;
         }
 
-        /* ---------- Controles ---------- */
-        .controls {
-            position: absolute;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            z-index: 20;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            pointer-events: none;
-        }
-        .controls button {
-            pointer-events: auto;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 40px;
-            padding: 10px 20px;
-            color: var(--text-color);
-            font-size: 0.9rem;
+        /* ---------- Conteneur des contrôles (en dessous du slider) ---------- */
+        .controls-wrapper {
+            background: var(--controls-bg);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
+            border-top: 1px solid var(--about-card-border);
+            border-bottom: 1px solid var(--about-card-border);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            transition: background 0.3s;
+        }
+        .controls-wrapper button {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid var(--card-border);
+            border-radius: 40px;
+            padding: 10px 24px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             cursor: pointer;
             transition: background 0.2s, transform 0.1s;
             display: flex;
@@ -307,43 +311,27 @@
             gap: 8px;
             font-family: inherit;
         }
-        .controls button:hover {
-            background: rgba(255,255,255,0.2);
+        .controls-wrapper button:hover {
+            background: rgba(255,255,255,0.15);
         }
-        .controls button:active {
+        .controls-wrapper button:active {
             transform: scale(0.95);
         }
-        .controls button i {
+        .controls-wrapper button i {
             font-size: 1rem;
         }
 
-        /* ---------- Footer existant ---------- */
-        .footer {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.75rem;
-            z-index: 10;
-            pointer-events: none;
-            font-family: monospace;
-        }
-
         /* ============================================================
-               NOUVELLE SECTION "À PROPOS / EXPERTISE"
+               SECTION "À PROPOS / EXPERTISE"
                ============================================================ */
         .about-section {
             width: 100%;
-            padding: 80px 20px 60px;
+            padding: 60px 20px 50px;
             background: var(--about-bg);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             border-top: 1px solid var(--about-card-border);
             transition: background 0.3s, border-color 0.3s;
-            position: relative;
-            z-index: 5;
         }
 
         .about-container {
@@ -369,7 +357,7 @@
             color: var(--text-muted);
             font-size: 1.05rem;
             max-width: 650px;
-            margin: 0 auto 50px;
+            margin: 0 auto 40px;
             line-height: 1.6;
             border-bottom: 1px solid var(--about-card-border);
             padding-bottom: 20px;
@@ -477,7 +465,19 @@
             margin: 6px auto 0;
         }
 
-        /* ---------- Responsive about ---------- */
+        /* ---------- Footer ---------- */
+        .main-footer {
+            text-align: center;
+            padding: 18px 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-family: monospace;
+            border-top: 1px solid var(--about-card-border);
+            background: var(--about-bg);
+            transition: background 0.3s;
+        }
+
+        /* ---------- Responsive about & controls ---------- */
         @media (max-width: 992px) {
             .about-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -491,7 +491,7 @@
                 gap: 20px;
             }
             .about-section {
-                padding: 60px 16px 50px;
+                padding: 40px 16px 30px;
             }
             .about-section .section-title {
                 font-size: 1.9rem;
@@ -505,15 +505,24 @@
             .about-card h3 {
                 font-size: 1.3rem;
             }
+            .controls-wrapper {
+                padding: 12px 16px;
+                gap: 12px;
+            }
+            .controls-wrapper button {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
         }
 
         /* ---------- Responsive slider ---------- */
         @media (max-width: 768px) {
+            .banner {
+                min-height: 70vh;
+            }
             .banner .slider {
                 width: 140px;
                 height: 170px;
-                left: 43%;
-                top: 24%;
             }
             .banner .slider .item {
                 transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(280px);
@@ -550,25 +559,18 @@
             .header h1 {
                 font-size: 1.4rem;
             }
-            .controls button {
-                padding: 6px 14px;
-                font-size: 0.8rem;
-            }
-            .controls {
-                top: 50%;
-                bottom: auto;
-                gap: 10px;
-            }
             .banner .slider .item:hover {
                 transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(300px) scale(1.02);
             }
         }
 
         @media (max-width: 480px) {
+            .banner {
+                min-height: 60vh;
+            }
             .banner .slider {
                 width: 110px;
                 height: 140px;
-                top: 22%;
             }
             .banner .slider .item {
                 transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(220px);
@@ -700,20 +702,19 @@
             </div>
         </div>
     </div>
-
-    <div class="controls">
-        <button id="pauseBtn" aria-label="Mettre en pause la rotation">
-            <i class="fas fa-pause"></i> Pause
-        </button>
-        <button id="themeBtn" aria-label="Basculer le thème clair/sombre">
-            <i class="fas fa-moon"></i> Thème
-        </button>
-    </div>
-
-    <div class="footer">⏎ survolez pour mettre en pause · cliquez sur une carte</div>
 </div>
 
-<!-- ========== NOUVELLE SECTION : EXPERTISE & COMPÉTENCES ========== -->
+<!-- ========== CONTRÔLES (en dessous du slider) ========== -->
+<div class="controls-wrapper" id="controlsWrapper">
+    <button id="pauseBtn" aria-label="Mettre en pause la rotation">
+        <i class="fas fa-pause"></i> Pause
+    </button>
+    <button id="themeBtn" aria-label="Basculer le thème clair/sombre">
+        <i class="fas fa-moon"></i> Thème
+    </button>
+</div>
+
+<!-- ========== SECTION "À PROPOS / EXPERTISE" ========== -->
 <section class="about-section" id="about">
     <div class="about-container">
         <h2 class="section-title">À propos · Expertise</h2>
@@ -749,6 +750,11 @@
         </div>
     </div>
 </section>
+
+<!-- ========== PIED DE PAGE ========== -->
+<div class="main-footer">
+    ⏎ survolez le slider pour mettre en pause · cliquez sur une carte
+</div>
 
 <!-- ========== SCRIPTS ========== -->
 <script>
