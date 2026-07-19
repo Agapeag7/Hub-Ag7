@@ -22,13 +22,8 @@
             --shadow-color: rgba(0,0,0,0.6);
             --glow-color: rgba(120,180,255,0.1);
             --input-bg: rgba(255,255,255,0.1);
-            /* Nouvelles variables pour la section about */
-            --about-card-bg: rgba(255,255,255,0.06);
-            --about-card-border: rgba(255,255,255,0.08);
-            --about-shadow: 0 20px 40px -12px rgba(0,0,0,0.6);
-            --about-title-color: #b0c4ff;
             --controls-bg: rgba(255,255,255,0.05);
-            --about-bg-overlay: rgba(10, 12, 15, 0.65);
+            --about-title-color: #b0c4ff;
         }
 
         body.light-theme {
@@ -41,12 +36,8 @@
             --shadow-color: rgba(0,0,0,0.2);
             --glow-color: rgba(0, 0, 0, 0.05);
             --input-bg: rgba(0,0,0,0.05);
-            --about-card-bg: rgba(255,255,255,0.7);
-            --about-card-border: rgba(0,0,0,0.08);
-            --about-shadow: 0 20px 40px -12px rgba(0,0,0,0.15);
-            --about-title-color: #3a4a7a;
             --controls-bg: rgba(0,0,0,0.03);
-            --about-bg-overlay: rgba(245, 247, 250, 0.7);
+            --about-title-color: #3a4a7a;
         }
 
         /* ---------- Base ---------- */
@@ -281,19 +272,21 @@
             z-index: 10;
         }
 
-        /* ---------- Conteneur des contrôles (en dessous du slider) ---------- */
+        /* ---------- Conteneur des contrôles ---------- */
         .controls-wrapper {
             background: var(--controls-bg);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border-top: 1px solid var(--about-card-border);
-            border-bottom: 1px solid var(--about-card-border);
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
             padding: 16px 20px;
             display: flex;
             justify-content: center;
             gap: 20px;
             flex-wrap: wrap;
             transition: background 0.3s;
+            position: relative;
+            z-index: 10;
         }
         .controls-wrapper button {
             background: rgba(255,255,255,0.08);
@@ -322,161 +315,96 @@
         }
 
         /* ============================================================
-               SECTION "À PROPOS / EXPERTISE" AVEC THREE.JS EN ARRIÈRE-PLAN
-               ============================================================ */
-        .about-section {
+           SECTION "À PROPOS" - UNIVERS 3D IMMERSIF
+           ============================================================ */
+        #about-section {
             position: relative;
             width: 100%;
-            padding: 60px 20px 50px;
+            height: 100vh; /* Plein écran pour l'expérience 3D */
             overflow: hidden;
+            background: #05070a;
             transition: background 0.3s;
-            background: var(--about-bg-overlay);
-            backdrop-filter: blur(2px);
-            -webkit-backdrop-filter: blur(2px);
-            border-top: 1px solid var(--about-card-border);
         }
 
-        /* Le canvas Three.js occupe tout l'espace en arrière-plan */
-        #three-canvas {
+        #about-section.light-bg {
+            background: #dce3ef;
+        }
+
+        #about-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 0;
-            pointer-events: none;
+            display: block;
         }
 
-        .about-container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .about-section .section-title {
+        /* Les textes 3D sont gérés par Three.js, mais on ajoute un overlay pour le titre principal (pour le SEO et l'accessibilité) */
+        .about-overlay-title {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
             text-align: center;
+            z-index: 5;
+            pointer-events: none;
             font-size: 2.4rem;
             font-weight: 700;
             letter-spacing: -0.5px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, var(--about-title-color), var(--text-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            transition: background 0.3s;
-        }
-
-        .about-section .section-sub {
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            max-width: 650px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-            border-bottom: 1px solid var(--about-card-border);
-            padding-bottom: 20px;
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-        }
-
-        .about-card {
-            background: var(--about-card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--about-card-border);
-            border-radius: 28px;
-            padding: 36px 28px 32px;
-            box-shadow: var(--about-shadow);
-            transition: transform 0.25s ease, box-shadow 0.3s ease, background 0.3s;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: left;
-        }
-
-        .about-card::before {
-            content: '';
-            position: absolute;
-            top: -60%;
-            right: -40%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.03), transparent 70%);
-            pointer-events: none;
-            transition: opacity 0.4s;
-        }
-
-        .about-card:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: 0 30px 50px -16px rgba(0,0,0,0.5);
-            border-color: var(--card-border);
-        }
-
-        body.light-theme .about-card:hover {
-            box-shadow: 0 30px 50px -16px rgba(0,0,0,0.15);
-        }
-
-        .about-card .card-icon {
-            font-size: 2.6rem;
-            margin-bottom: 18px;
-            background: linear-gradient(135deg, var(--about-title-color), #a0b8ff);
+            background: linear-gradient(135deg, var(--about-title-color), #fff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             opacity: 0.9;
+            text-shadow: 0 0 40px rgba(100,150,255,0.2);
+            transition: background 0.3s;
+        }
+        body.light-theme .about-overlay-title {
+            background: linear-gradient(135deg, var(--about-title-color), #1a1a2e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .about-card h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 14px;
-            letter-spacing: -0.3px;
-            color: var(--text-color);
-            transition: color 0.3s;
-        }
-
-        .about-card p {
-            font-size: 0.98rem;
-            line-height: 1.7;
-            color: var(--text-color);
-            opacity: 0.85;
-            transition: opacity 0.3s;
-            margin: 0;
-            flex: 1;
-        }
-
-        .about-card .card-tag {
-            margin-top: 20px;
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            padding: 4px 14px;
-            border-radius: 40px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid var(--about-card-border);
+        .about-overlay-sub {
+            position: absolute;
+            top: 90px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
             color: var(--text-muted);
-            transition: background 0.2s;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            font-weight: 300;
+            opacity: 0.7;
         }
 
-        .about-card:hover .card-tag {
-            background: rgba(255,255,255,0.1);
+        /* Indicateur de scroll */
+        .scroll-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            animation: bounce 2s infinite;
+            pointer-events: none;
+        }
+        .scroll-hint i {
+            font-size: 1.4rem;
         }
 
-        .about-divider {
-            width: 60px;
-            height: 3px;
-            border-radius: 6px;
-            background: linear-gradient(90deg, var(--about-title-color), transparent);
-            margin: 6px auto 0;
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
         }
 
         /* ---------- Footer ---------- */
@@ -486,50 +414,12 @@
             color: var(--text-muted);
             font-size: 0.8rem;
             font-family: monospace;
-            border-top: 1px solid var(--about-card-border);
-            background: var(--about-bg-overlay);
+            border-top: 1px solid var(--card-border);
+            background: var(--bg-page);
             transition: background 0.3s;
         }
 
-        /* ---------- Responsive about & controls ---------- */
-        @media (max-width: 992px) {
-            .about-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-            }
-        }
-
-        @media (max-width: 680px) {
-            .about-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .about-section {
-                padding: 40px 16px 30px;
-            }
-            .about-section .section-title {
-                font-size: 1.9rem;
-            }
-            .about-card {
-                padding: 28px 22px 24px;
-            }
-            .about-card .card-icon {
-                font-size: 2rem;
-            }
-            .about-card h3 {
-                font-size: 1.3rem;
-            }
-            .controls-wrapper {
-                padding: 12px 16px;
-                gap: 12px;
-            }
-            .controls-wrapper button {
-                padding: 8px 16px;
-                font-size: 0.85rem;
-            }
-        }
-
-        /* ---------- Responsive slider ---------- */
+        /* ---------- Responsive ---------- */
         @media (max-width: 768px) {
             .banner {
                 min-height: 70vh;
@@ -576,6 +466,14 @@
             .banner .slider .item:hover {
                 transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(300px) scale(1.02);
             }
+            .about-overlay-title {
+                font-size: 1.8rem;
+                top: 20px;
+            }
+            .about-overlay-sub {
+                top: 70px;
+                font-size: 0.85rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -591,6 +489,14 @@
             }
             .banner .slider .item:hover {
                 transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(240px) scale(1.02);
+            }
+            .about-overlay-title {
+                font-size: 1.5rem;
+                top: 15px;
+            }
+            .about-overlay-sub {
+                top: 55px;
+                font-size: 0.75rem;
             }
         }
     </style>
@@ -718,7 +624,7 @@
     </div>
 </div>
 
-<!-- ========== CONTRÔLES (en dessous du slider) ========== -->
+<!-- ========== CONTRÔLES ========== -->
 <div class="controls-wrapper" id="controlsWrapper">
     <button id="pauseBtn" aria-label="Mettre en pause la rotation">
         <i class="fas fa-pause"></i> Pause
@@ -728,44 +634,18 @@
     </button>
 </div>
 
-<!-- ========== SECTION "À PROPOS / EXPERTISE" AVEC THREE.JS ========== -->
-<section class="about-section" id="about">
-    <!-- Canvas pour Three.js -->
-    <div id="three-canvas"></div>
-
-    <div class="about-container">
-        <h2 class="section-title">À propos · Expertise</h2>
-        <div class="about-divider"></div>
-        <p class="section-sub">
-            Développeur informatique et designer graphique, spécialisé dans la conception de solutions numériques modernes, performantes et intuitives.
-        </p>
-
-        <div class="about-grid">
-            <!-- Expertise -->
-            <div class="about-card">
-                <div class="card-icon"><i class="fas fa-cogs"></i></div>
-                <h3>Expertise</h3>
-                <p>Développeur informatique et designer graphique, spécialisé dans la conception de solutions numériques modernes, performantes et intuitives. Une approche axée sur l'innovation, la qualité et l'expérience utilisateur permet de transformer des idées en solutions fiables, esthétiques et efficaces.</p>
-                <span class="card-tag">Innovation &amp; Qualité</span>
-            </div>
-
-            <!-- Compétences -->
-            <div class="about-card">
-                <div class="card-icon"><i class="fas fa-code"></i></div>
-                <h3>Compétences</h3>
-                <p>Compétences en développement d'applications de bureau, développement web, programmation Python, conception d'interfaces utilisateur (UI), design graphique, identité visuelle, automatisation de processus, intelligence artificielle, apprentissage automatique, gestion de bases de données, optimisation des performances, architecture logicielle, résolution de problèmes techniques et création d'expériences numériques centrées sur l'utilisateur.</p>
-                <span class="card-tag">Full‑stack &amp; IA</span>
-            </div>
-
-            <!-- Engagement -->
-            <div class="about-card">
-                <div class="card-icon"><i class="fas fa-handshake"></i></div>
-                <h3>Engagement</h3>
-                <p>Chaque réalisation est développée avec un souci constant de qualité, de performance et de précision. L'objectif est de proposer des solutions innovantes, évolutives et adaptées aux besoins des utilisateurs, tout en respectant les meilleures pratiques du développement logiciel et du design.</p>
-                <span class="card-tag">Excellence &amp; Éthique</span>
-            </div>
-        </div>
+<!-- ========== SECTION "À PROPOS" - UNIVERS 3D ========== -->
+<section id="about-section">
+    <!-- Overlay texte (pour le titre, accessible) -->
+    <div class="about-overlay-title">À propos · Expertise</div>
+    <div class="about-overlay-sub">Explorez l'univers d'AG7</div>
+    <div class="scroll-hint">
+        <span>Défilez pour explorer</span>
+        <i class="fas fa-chevron-down"></i>
     </div>
+
+    <!-- Canvas Three.js -->
+    <canvas id="about-canvas"></canvas>
 </section>
 
 <!-- ========== PIED DE PAGE ========== -->
@@ -773,230 +653,460 @@
     ⏎ survolez le slider pour mettre en pause · cliquez sur une carte
 </div>
 
-<!-- ========== THREE.JS (import via CDN) ========== -->
+<!-- ========== THREE.JS ========== -->
 <script type="importmap">
     {
         "imports": {
-            "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
         }
     }
 </script>
 
 <script type="module">
     import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-    // ---------- Initialisation de la scène Three.js ----------
-    const container = document.getElementById('three-canvas');
-    const section = document.getElementById('about');
+    // ---------- Configuration ----------
+    const section = document.getElementById('about-section');
+    const canvas = document.getElementById('about-canvas');
 
     // Dimensions
     const width = section.clientWidth;
     const height = section.clientHeight;
 
-    // Scène
+    // ---------- Scène ----------
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x05070a);
 
-    // Caméra (perspective)
+    // ---------- Caméra (perspective) ----------
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 12);
+    camera.position.set(0, 2, 12);
+    camera.lookAt(0, 0, 0);
 
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // ---------- Renderer WebGL ----------
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: false
+    });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000000, 0); // transparent
-    container.appendChild(renderer.domElement);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // ---------- Lumière ----------
-    const ambientLight = new THREE.AmbientLight(0x404060);
+    // ---------- Renderer CSS2D pour les textes ----------
+    const labelRenderer = new CSS2DRenderer();
+    labelRenderer.setSize(width, height);
+    labelRenderer.domElement.style.position = 'absolute';
+    labelRenderer.domElement.style.top = '0';
+    labelRenderer.domElement.style.left = '0';
+    labelRenderer.domElement.style.pointerEvents = 'none'; // permet de cliquer à travers
+    section.appendChild(labelRenderer.domElement);
+
+    // ---------- Contrôles Orbit (pour la balade 3D) ----------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.autoRotate = true;
+    controls.autoRotateSpeed = 0.8;
+    controls.enableZoom = true;
+    controls.zoomSpeed = 0.8;
+    controls.rotateSpeed = 0.5;
+    controls.target.set(0, 0, 0);
+    controls.maxPolarAngle = Math.PI / 2.4;
+    controls.minDistance = 4;
+    controls.maxDistance = 18;
+
+    // ---------- Lumières ----------
+    const ambientLight = new THREE.AmbientLight(0x40406b, 0.6);
     scene.add(ambientLight);
 
-    const light = new THREE.DirectionalLight(0xffffff, 1);
-    light.position.set(5, 5, 5);
-    scene.add(light);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.position.set(5, 10, 7);
+    dirLight.castShadow = true;
+    scene.add(dirLight);
 
-    // ---------- Objets 3D ----------
-    // Groupe principal qui va tourner lentement
-    const group = new THREE.Group();
-    scene.add(group);
+    const backLight = new THREE.DirectionalLight(0x4488ff, 0.5);
+    backLight.position.set(-5, 0, -5);
+    scene.add(backLight);
 
-    // Couleurs en fonction du thème (sera mis à jour)
-    let mainColor = 0x6699ff;
-    let secondaryColor = 0x4488ee;
+    const pointLight = new THREE.PointLight(0x6688ff, 0.8, 20);
+    pointLight.position.set(0, 3, 4);
+    scene.add(pointLight);
 
-    // Fonction pour créer des sphères avec différents rayons et couleurs
-    function createParticles(count, radius, color, spread) {
-        const geometry = new THREE.SphereGeometry(radius, 16, 16);
-        const material = new THREE.MeshStandardMaterial({
+    // ---------- Particules (étoiles) ----------
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsCount = 2000;
+    const posArray = new Float32Array(starsCount * 3);
+    for (let i = 0; i < starsCount * 3; i += 3) {
+        const r = 30 + Math.random() * 40;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+        posArray[i] = r * Math.sin(phi) * Math.cos(theta);
+        posArray[i+1] = r * Math.sin(phi) * Math.sin(theta);
+        posArray[i+2] = r * Math.cos(phi);
+    }
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const starsMaterial = new THREE.PointsMaterial({
+        color: 0x88aaff,
+        size: 0.12,
+        transparent: true,
+        opacity: 0.8,
+        blending: THREE.AdditiveBlending
+    });
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    // Deuxième couche de petites étoiles
+    const starsGeometry2 = new THREE.BufferGeometry();
+    const posArray2 = new Float32Array(1000 * 3);
+    for (let i = 0; i < 1000 * 3; i += 3) {
+        const r = 15 + Math.random() * 25;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+        posArray2[i] = r * Math.sin(phi) * Math.cos(theta);
+        posArray2[i+1] = r * Math.sin(phi) * Math.sin(theta);
+        posArray2[i+2] = r * Math.cos(phi);
+    }
+    starsGeometry2.setAttribute('position', new THREE.BufferAttribute(posArray2, 3));
+    const starsMaterial2 = new THREE.PointsMaterial({
+        color: 0xccddff,
+        size: 0.06,
+        transparent: true,
+        opacity: 0.6,
+        blending: THREE.AdditiveBlending
+    });
+    const stars2 = new THREE.Points(starsGeometry2, starsMaterial2);
+    scene.add(stars2);
+
+    // ---------- Anneaux décoratifs ----------
+    function createRing(radius, tube, color, opacity, position, rotation) {
+        const geo = new THREE.TorusGeometry(radius, tube, 32, 64);
+        const mat = new THREE.MeshStandardMaterial({
             color: color,
             emissive: color,
-            emissiveIntensity: 0.3,
-            roughness: 0.2,
-            metalness: 0.8,
+            emissiveIntensity: 0.15,
             transparent: true,
-            opacity: 0.7
+            opacity: opacity,
+            wireframe: false,
+            roughness: 0.3,
+            metalness: 0.7
         });
-
-        const particles = [];
-        for (let i = 0; i < count; i++) {
-            const mesh = new THREE.Mesh(geometry, material);
-            // Position aléatoire dans un volume sphérique
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos((Math.random() * 2) - 1);
-            const r = spread * Math.cbrt(Math.random());
-            mesh.position.x = r * Math.sin(phi) * Math.cos(theta);
-            mesh.position.y = r * Math.sin(phi) * Math.sin(theta);
-            mesh.position.z = r * Math.cos(phi);
-            // Vitesse de rotation individuelle (stockée)
-            mesh.userData = {
-                speed: 0.002 + Math.random() * 0.005,
-                axis: new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize()
-            };
-            group.add(mesh);
-            particles.push(mesh);
-        }
-        return particles;
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.set(position.x, position.y, position.z);
+        mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+        scene.add(mesh);
+        return mesh;
     }
 
-    // Création de deux populations de sphères
-    const bigSpheres = createParticles(40, 0.25, mainColor, 4.5);
-    const smallSpheres = createParticles(80, 0.12, secondaryColor, 5.5);
+    const ring1 = createRing(2.8, 0.04, 0x4488ff, 0.25, { x: 0, y: 0, z: 0 }, { x: Math.PI/3, y: 0.2, z: 0 });
+    const ring2 = createRing(3.5, 0.03, 0x88aaff, 0.2, { x: 1.2, y: -0.5, z: 0.8 }, { x: 0.8, y: 0.5, z: 0.3 });
+    const ring3 = createRing(2.2, 0.025, 0x66aaff, 0.3, { x: -1.0, y: 0.8, z: -0.6 }, { x: 0.2, y: 0.9, z: 0.4 });
+    const ring4 = createRing(4.0, 0.02, 0x3366cc, 0.15, { x: -1.8, y: -0.3, z: -1.2 }, { x: 0.5, y: 0.1, z: 0.7 });
 
-    // Quelques anneaux/torus pour décorer
-    function createRing(radius, tube, color, position) {
-        const geometry = new THREE.TorusGeometry(radius, tube, 16, 32);
-        const material = new THREE.MeshStandardMaterial({
-            color: color,
-            emissive: color,
-            emissiveIntensity: 0.2,
-            transparent: true,
-            opacity: 0.3,
-            wireframe: false
-        });
-        const ring = new THREE.Mesh(geometry, material);
-        ring.position.set(position.x, position.y, position.z);
-        ring.rotation.x = Math.random() * Math.PI;
-        ring.rotation.y = Math.random() * Math.PI;
-        group.add(ring);
-        return ring;
-    }
-
-    const ring1 = createRing(1.8, 0.03, 0x88aaff, { x: 0, y: 0, z: 0 });
-    const ring2 = createRing(2.5, 0.02, 0x4488ee, { x: 1.2, y: -0.8, z: 0.5 });
-    const ring3 = createRing(2.0, 0.025, 0x66aaff, { x: -1.0, y: 1.2, z: -0.3 });
-
-    // Petit noyau lumineux
-    const coreGeo = new THREE.SphereGeometry(0.4, 24, 24);
+    // ---------- Noyau lumineux central ----------
+    const coreGeo = new THREE.SphereGeometry(0.5, 32, 32);
     const coreMat = new THREE.MeshStandardMaterial({
         color: 0x88ccff,
         emissive: 0x4488ff,
-        emissiveIntensity: 0.6,
+        emissiveIntensity: 0.8,
         roughness: 0.1,
         metalness: 0.9
     });
     const core = new THREE.Mesh(coreGeo, coreMat);
     core.position.set(0, 0, 0);
-    group.add(core);
+    scene.add(core);
+
+    // Petites sphères orbitantes autour du noyau
+    const orbCount = 30;
+    const orbGroup = new THREE.Group();
+    scene.add(orbGroup);
+    for (let i = 0; i < orbCount; i++) {
+        const size = 0.04 + Math.random() * 0.08;
+        const geo = new THREE.SphereGeometry(size, 8, 8);
+        const mat = new THREE.MeshStandardMaterial({
+            color: 0x88aaff,
+            emissive: 0x4488ff,
+            emissiveIntensity: 0.3
+        });
+        const sphere = new THREE.Mesh(geo, mat);
+        const radius = 0.8 + Math.random() * 0.6;
+        const angle = (i / orbCount) * Math.PI * 2;
+        const height = (Math.random() - 0.5) * 1.2;
+        sphere.position.set(
+            radius * Math.cos(angle),
+            height,
+            radius * Math.sin(angle)
+        );
+        sphere.userData = {
+            angle: angle,
+            radius: radius,
+            speed: 0.005 + Math.random() * 0.01,
+            heightOffset: height
+        };
+        orbGroup.add(sphere);
+    }
+
+    // ---------- Création des cartes 3D avec CSS2DRenderer ----------
+    // Données des cartes : titre, texte, icône (en vrai on utilise du HTML)
+    const cardData = [
+        {
+            title: 'Expertise',
+            icon: 'fas fa-cogs',
+            text: 'Développeur informatique et designer graphique, spécialisé dans la conception de solutions numériques modernes, performantes et intuitives. Une approche axée sur l\'innovation, la qualité et l\'expérience utilisateur permet de transformer des idées en solutions fiables, esthétiques et efficaces.',
+            tag: 'Innovation & Qualité',
+            color: '#6699ff'
+        },
+        {
+            title: 'Compétences',
+            icon: 'fas fa-code',
+            text: 'Compétences en développement d\'applications de bureau, développement web, programmation Python, conception d\'interfaces utilisateur (UI), design graphique, identité visuelle, automatisation de processus, intelligence artificielle, apprentissage automatique, gestion de bases de données, optimisation des performances, architecture logicielle, résolution de problèmes techniques et création d\'expériences numériques centrées sur l\'utilisateur.',
+            tag: 'Full‑stack & IA',
+            color: '#88aaff'
+        },
+        {
+            title: 'Engagement',
+            icon: 'fas fa-handshake',
+            text: 'Chaque réalisation est développée avec un souci constant de qualité, de performance et de précision. L\'objectif est de proposer des solutions innovantes, évolutives et adaptées aux besoins des utilisateurs, tout en respectant les meilleures pratiques du développement logiciel et du design.',
+            tag: 'Excellence & Éthique',
+            color: '#aaccff'
+        }
+    ];
+
+    // Positions des cartes dans l'espace 3D
+    const positions = [
+        { x: -4.5, y: 0.5, z: 0 },
+        { x: 0, y: -0.8, z: 3.5 },
+        { x: 4.5, y: 0.7, z: -1.5 }
+    ];
+
+    // Création des éléments CSS2D
+    const cardObjects = [];
+    cardData.forEach((data, index) => {
+        const pos = positions[index];
+
+        // Conteneur HTML pour la carte
+        const div = document.createElement('div');
+        div.style.background = 'rgba(20, 25, 35, 0.75)';
+        div.style.backdropFilter = 'blur(12px)';
+        div.style.borderRadius = '24px';
+        div.style.padding = '24px 20px 20px';
+        div.style.border = '1px solid rgba(100, 150, 255, 0.25)';
+        div.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.6)';
+        div.style.color = '#fff';
+        div.style.width = '280px';
+        div.style.maxWidth = '280px';
+        div.style.textAlign = 'left';
+        div.style.transition = 'transform 0.3s, box-shadow 0.3s';
+        div.style.fontFamily = "'Inter', sans-serif";
+        div.style.cursor = 'default';
+        div.style.pointerEvents = 'auto'; // pour permettre l'interaction
+
+        // Style du thème clair (sera appliqué via classe)
+        if (document.body.classList.contains('light-theme')) {
+            div.style.background = 'rgba(255, 255, 255, 0.8)';
+            div.style.color = '#1a1a2e';
+            div.style.borderColor = 'rgba(0,0,0,0.12)';
+            div.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.15)';
+        }
+
+        // Icône
+        const iconDiv = document.createElement('div');
+        iconDiv.style.fontSize = '2.4rem';
+        iconDiv.style.marginBottom = '12px';
+        iconDiv.style.color = data.color;
+        iconDiv.style.filter = 'drop-shadow(0 0 8px currentColor)';
+        iconDiv.innerHTML = `<i class="${data.icon}"></i>`;
+        div.appendChild(iconDiv);
+
+        // Titre
+        const titleDiv = document.createElement('h3');
+        titleDiv.textContent = data.title;
+        titleDiv.style.fontSize = '1.6rem';
+        titleDiv.style.fontWeight = '700';
+        titleDiv.style.margin = '0 0 10px 0';
+        titleDiv.style.background = `linear-gradient(135deg, ${data.color}, #ffffff)`;
+        titleDiv.style.webkitBackgroundClip = 'text';
+        titleDiv.style.webkitTextFillColor = 'transparent';
+        titleDiv.style.backgroundClip = 'text';
+        div.appendChild(titleDiv);
+
+        // Texte
+        const textP = document.createElement('p');
+        textP.textContent = data.text;
+        textP.style.fontSize = '0.9rem';
+        textP.style.lineHeight = '1.6';
+        textP.style.opacity = '0.85';
+        textP.style.margin = '0 0 14px 0';
+        div.appendChild(textP);
+
+        // Tag
+        const tagSpan = document.createElement('span');
+        tagSpan.textContent = data.tag;
+        tagSpan.style.display = 'inline-block';
+        tagSpan.style.fontSize = '0.7rem';
+        tagSpan.style.fontWeight = '600';
+        tagSpan.style.letterSpacing = '0.5px';
+        tagSpan.style.textTransform = 'uppercase';
+        tagSpan.style.padding = '4px 14px';
+        tagSpan.style.borderRadius = '40px';
+        tagSpan.style.background = 'rgba(255,255,255,0.08)';
+        tagSpan.style.border = '1px solid rgba(255,255,255,0.1)';
+        tagSpan.style.color = 'rgba(255,255,255,0.6)';
+        div.appendChild(tagSpan);
+
+        // Appliquer le thème clair au tag
+        if (document.body.classList.contains('light-theme')) {
+            tagSpan.style.background = 'rgba(0,0,0,0.05)';
+            tagSpan.style.borderColor = 'rgba(0,0,0,0.1)';
+            tagSpan.style.color = 'rgba(0,0,0,0.5)';
+        }
+
+        // Création de l'objet CSS2D
+        const label = new CSS2DObject(div);
+        label.position.set(pos.x, pos.y, pos.z);
+        scene.add(label);
+        cardObjects.push(label);
+    });
+
+    // ---------- Mise à jour du thème pour les cartes CSS ----------
+    function updateCardTheme(isLight) {
+        cardObjects.forEach((label, idx) => {
+            const div = label.element;
+            if (isLight) {
+                div.style.background = 'rgba(255, 255, 255, 0.8)';
+                div.style.color = '#1a1a2e';
+                div.style.borderColor = 'rgba(0,0,0,0.12)';
+                div.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.15)';
+                // tag
+                const tag = div.querySelector('span:last-child');
+                if (tag) {
+                    tag.style.background = 'rgba(0,0,0,0.05)';
+                    tag.style.borderColor = 'rgba(0,0,0,0.1)';
+                    tag.style.color = 'rgba(0,0,0,0.5)';
+                }
+                // titre
+                const title = div.querySelector('h3');
+                if (title) {
+                    const color = cardData[idx].color;
+                    title.style.background = `linear-gradient(135deg, ${color}, #1a1a2e)`;
+                    title.style.webkitBackgroundClip = 'text';
+                    title.style.webkitTextFillColor = 'transparent';
+                    title.style.backgroundClip = 'text';
+                }
+            } else {
+                div.style.background = 'rgba(20, 25, 35, 0.75)';
+                div.style.color = '#fff';
+                div.style.borderColor = 'rgba(100, 150, 255, 0.25)';
+                div.style.boxShadow = '0 20px 40px -12px rgba(0,0,0,0.6)';
+                const tag = div.querySelector('span:last-child');
+                if (tag) {
+                    tag.style.background = 'rgba(255,255,255,0.08)';
+                    tag.style.borderColor = 'rgba(255,255,255,0.1)';
+                    tag.style.color = 'rgba(255,255,255,0.6)';
+                }
+                const title = div.querySelector('h3');
+                if (title) {
+                    const color = cardData[idx].color;
+                    title.style.background = `linear-gradient(135deg, ${color}, #ffffff)`;
+                    title.style.webkitBackgroundClip = 'text';
+                    title.style.webkitTextFillColor = 'transparent';
+                    title.style.backgroundClip = 'text';
+                }
+            }
+        });
+    }
 
     // ---------- Animation ----------
     function animate() {
         requestAnimationFrame(animate);
 
-        // Rotation lente du groupe
-        group.rotation.y += 0.0015;
-        group.rotation.x += 0.0005;
-        group.rotation.z += 0.0003;
-
-        // Faire tourner les sphères individuellement
-        bigSpheres.forEach((sphere, index) => {
-            sphere.rotation.x += sphere.userData.speed * 0.5;
-            sphere.rotation.y += sphere.userData.speed * 0.7;
-        });
-        smallSpheres.forEach((sphere, index) => {
-            sphere.rotation.x += sphere.userData.speed * 0.6;
-            sphere.rotation.z += sphere.userData.speed * 0.4;
-        });
-
-        // Faire tourner les anneaux
-        ring1.rotation.y += 0.005;
-        ring2.rotation.x += 0.003;
-        ring2.rotation.z += 0.004;
-        ring3.rotation.y += 0.006;
+        // Rotation des anneaux
+        ring1.rotation.y += 0.003;
+        ring2.rotation.x += 0.002;
+        ring2.rotation.z += 0.001;
+        ring3.rotation.y += 0.004;
         ring3.rotation.x += 0.002;
+        ring4.rotation.y += 0.005;
+        ring4.rotation.z += 0.002;
 
+        // Rotation des étoiles
+        stars.rotation.y += 0.00015;
+        stars.rotation.x += 0.00005;
+        stars2.rotation.y -= 0.0002;
+
+        // Orbites autour du noyau
+        orbGroup.children.forEach((sphere, i) => {
+            const data = sphere.userData;
+            data.angle += data.speed;
+            sphere.position.x = data.radius * Math.cos(data.angle);
+            sphere.position.z = data.radius * Math.sin(data.angle);
+            // légère oscillation verticale
+            sphere.position.y = data.heightOffset + Math.sin(data.angle * 2) * 0.1;
+        });
+
+        // Pulse du noyau
+        const scale = 1 + Math.sin(Date.now() * 0.002) * 0.04;
+        core.scale.set(scale, scale, scale);
+
+        // Mise à jour des contrôles
+        controls.update();
+
+        // Rendu
         renderer.render(scene, camera);
+        labelRenderer.render(scene, camera);
     }
 
     animate();
 
-    // ---------- Gestion du redimensionnement ----------
+    // ---------- Redimensionnement ----------
     function resize() {
         const w = section.clientWidth;
         const h = section.clientHeight;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
+        labelRenderer.setSize(w, h);
     }
 
     window.addEventListener('resize', resize);
 
-    // ---------- Mise à jour des couleurs en fonction du thème ----------
-    function updateTheme(lightMode) {
-        const newMain = lightMode ? 0x4a6fa5 : 0x6699ff;
-        const newSecondary = lightMode ? 0x7a9bcb : 0x4488ee;
-        mainColor = newMain;
-        secondaryColor = newSecondary;
-
-        // Mettre à jour les matériaux des sphères
-        bigSpheres.forEach(sphere => {
-            sphere.material.color.setHex(mainColor);
-            sphere.material.emissive.setHex(mainColor);
-        });
-        smallSpheres.forEach(sphere => {
-            sphere.material.color.setHex(secondaryColor);
-            sphere.material.emissive.setHex(secondaryColor);
-        });
-
-        // Anneaux
-        ring1.material.color.setHex(0x88aaff);
-        ring2.material.color.setHex(0x4488ee);
-        ring3.material.color.setHex(0x66aaff);
-
-        // Noyau
-        core.material.color.setHex(0x88ccff);
-        core.material.emissive.setHex(0x4488ff);
-    }
-
-    // Exposer la fonction pour qu'elle soit appelée depuis le bouton thème
-    window.updateThreeTheme = updateTheme;
-
-    // Détecter le thème initial
-    const isLight = document.body.classList.contains('light-theme');
-    updateTheme(isLight);
-
-    // Observer les changements de thème via le bouton (écouteur sur le bouton)
-    // On va ajouter un écouteur sur le bouton themeBtn pour mettre à jour Three
+    // ---------- Gestion du thème (depuis le bouton) ----------
     const themeBtn = document.getElementById('themeBtn');
     themeBtn.addEventListener('click', () => {
-        const isLightNow = document.body.classList.contains('light-theme');
-        updateTheme(isLightNow);
+        const isLight = document.body.classList.contains('light-theme');
+        // Mise à jour du fond de la section
+        section.classList.toggle('light-bg', isLight);
+        // Mise à jour des cartes
+        updateCardTheme(isLight);
     });
 
-    // Nettoyage (optionnel)
+    // Appliquer le thème initial
+    setTimeout(() => {
+        const isLight = document.body.classList.contains('light-theme');
+        section.classList.toggle('light-bg', isLight);
+        updateCardTheme(isLight);
+    }, 100);
+
+    // ---------- Nettoyage ----------
     window.addEventListener('beforeunload', () => {
         renderer.dispose();
-        container.removeChild(renderer.domElement);
+        labelRenderer.domElement.remove();
     });
+
+    // Petit ajustement pour que les contrôles Orbit ne bloquent pas le scroll
+    renderer.domElement.style.touchAction = 'none';
 </script>
 
 <!-- ========== SCRIPTS (gestion slider, copier, pause) ========== -->
 <script>
     (function() {
-        // ---------- éléments ----------
         const slider = document.getElementById('slider');
         const pauseBtn = document.getElementById('pauseBtn');
 
-        // ---------- Gestion des clics sur les cartes ----------
+        // Gestion des clics sur les cartes
         const cards = document.querySelectorAll('.card');
         cards.forEach(card => {
             card.addEventListener('click', (e) => {
@@ -1028,7 +1138,7 @@
             }
         }
 
-        // ---------- Bouton Copier ----------
+        // Copier
         document.querySelectorAll('.copy-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1058,7 +1168,7 @@
             });
         });
 
-        // ---------- Pause/Play ----------
+        // Pause
         let paused = false;
         pauseBtn.addEventListener('click', () => {
             paused = !paused;
@@ -1068,7 +1178,6 @@
                 '<i class="fas fa-pause"></i> Pause';
         });
 
-        // ---------- Pause au toucher sur mobile ----------
         slider.addEventListener('touchstart', () => {
             slider.classList.add('paused');
         });
