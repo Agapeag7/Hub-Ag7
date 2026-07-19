@@ -24,6 +24,7 @@
             --input-bg: rgba(255,255,255,0.1);
             --controls-bg: rgba(255,255,255,0.05);
             --about-title-color: #b0c4ff;
+            --about-bg: #05070a;
         }
 
         body.light-theme {
@@ -38,6 +39,7 @@
             --input-bg: rgba(0,0,0,0.05);
             --controls-bg: rgba(0,0,0,0.03);
             --about-title-color: #3a4a7a;
+            --about-bg: #dce3ef;
         }
 
         /* ---------- Base ---------- */
@@ -45,6 +47,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
@@ -322,17 +328,13 @@
             width: 100%;
             height: 100vh;
             overflow: hidden;
-            background: #05070a;
+            background: var(--about-bg);
             transition: background 0.3s;
             cursor: grab;
         }
 
         #about-section:active {
             cursor: grabbing;
-        }
-
-        #about-section.light-bg {
-            background: #dce3ef;
         }
 
         #about-canvas {
@@ -457,6 +459,98 @@
             background: rgba(0,0,0,0.15);
         }
 
+        /* Overlay de contenu (affiché à l'intérieur de la sphère) */
+        #content-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 8;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            background: rgba(10, 12, 18, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 32px;
+            padding: 40px 48px;
+            max-width: 560px;
+            width: 90%;
+            border: 1px solid rgba(100,150,255,0.2);
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            text-align: left;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        #content-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        body.light-theme #content-overlay {
+            background: rgba(240, 244, 250, 0.9);
+            color: #1a1a2e;
+            border-color: rgba(0,0,0,0.12);
+            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.2);
+        }
+
+        /* Scrollbar personnalisée pour le contenu */
+        #content-overlay::-webkit-scrollbar {
+            width: 6px;
+        }
+        #content-overlay::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #content-overlay::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        body.light-theme #content-overlay::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* ---------- Bouton retour en haut ---------- */
+        #scroll-top-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            width: 52px;
+            height: 52px;
+            color: var(--text-color);
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: opacity 0.3s, transform 0.2s;
+            opacity: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #scroll-top-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #scroll-top-btn:hover {
+            transform: scale(1.08);
+            background: rgba(255,255,255,0.2);
+        }
+        body.light-theme #scroll-top-btn {
+            background: rgba(0,0,0,0.06);
+            border-color: rgba(0,0,0,0.15);
+            color: #1a1a2e;
+        }
+        body.light-theme #scroll-top-btn:hover {
+            background: rgba(0,0,0,0.12);
+        }
+
         /* ---------- Footer ---------- */
         .main-footer {
             text-align: center;
@@ -529,6 +623,17 @@
                 font-size: 0.9rem;
                 bottom: 70px;
             }
+            #content-overlay {
+                padding: 28px 24px;
+                max-width: 92%;
+            }
+            #scroll-top-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.2rem;
+                bottom: 20px;
+                right: 20px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -557,6 +662,17 @@
                 padding: 8px 16px;
                 font-size: 0.8rem;
                 bottom: 60px;
+            }
+            #content-overlay {
+                padding: 24px 18px;
+                max-width: 96%;
+            }
+            #scroll-top-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                bottom: 16px;
+                right: 16px;
             }
         }
     </style>
@@ -696,7 +812,7 @@
 
 <!-- ========== SECTION "À PROPOS" - UNIVERS 3D ========== -->
 <section id="about-section">
-    <!-- Overlay texte (pour le titre) -->
+    <!-- Overlay texte -->
     <div class="about-overlay-title">À propos · Expertise</div>
     <div class="about-overlay-sub">Cliquez sur une sphère pour explorer</div>
     <div class="scroll-hint">
@@ -709,6 +825,9 @@
         <i class="fas fa-arrow-left"></i> Retour à l'univers
     </button>
 
+    <!-- Overlay contenu -->
+    <div id="content-overlay"></div>
+
     <!-- Canvas Three.js -->
     <canvas id="about-canvas"></canvas>
 </section>
@@ -717,6 +836,11 @@
 <div class="main-footer">
     ⏎ survolez le slider pour mettre en pause · cliquez sur une carte
 </div>
+
+<!-- ========== BOUTON RETOUR EN HAUT ========== -->
+<button id="scroll-top-btn" aria-label="Retour en haut">
+    <i class="fas fa-arrow-up"></i>
+</button>
 
 <!-- ========== THREE.JS ========== -->
 <script type="importmap">
@@ -736,6 +860,7 @@
     const section = document.getElementById('about-section');
     const canvas = document.getElementById('about-canvas');
     const backBtn = document.getElementById('back-btn');
+    const contentOverlay = document.getElementById('content-overlay');
 
     // Dimensions
     let width = section.clientWidth;
@@ -876,8 +1001,8 @@
     ];
 
     // ---------- Création des sphères interactives ----------
-    const spheres = [];
     const sphereMeshes = [];
+    const ringMeshes = [];
 
     sphereData.forEach((data) => {
         // Sphère principale
@@ -913,7 +1038,7 @@
         ring.rotation.y = Math.random() * Math.PI;
         ring.userData = { parentId: data.id, speed: 0.005 + Math.random() * 0.005 };
         scene.add(ring);
-        spheres.push({ mesh, ring, data });
+        ringMeshes.push(ring);
 
         // Petit noyau lumineux à l'intérieur
         const coreGeo = new THREE.SphereGeometry(0.25, 16, 16);
@@ -925,36 +1050,30 @@
         const core = new THREE.Mesh(coreGeo, coreMat);
         core.position.set(data.position.x, data.position.y, data.position.z);
         scene.add(core);
-        spheres.push({ core, data });
+        // On stocke le core pour l'animer
+        core.userData = { parentId: data.id };
     });
 
-    // ---------- Création des étiquettes CSS2D pour les titres sur les sphères ----------
-    // On utilise des sprites ou des CSS2DObjects pour afficher le titre au-dessus de chaque sphère
-    // Pour éviter l'import CSS2DRenderer, on va utiliser des sprites avec canvas
+    // ---------- Étiquettes (sprites) ----------
     function createLabelSprite(text, color) {
         const canvas = document.createElement('canvas');
         canvas.width = 512;
         canvas.height = 128;
         const ctx = canvas.getContext('2d');
 
-        // Fond transparent
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Texte
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.font = 'Bold 52px Inter, system-ui, sans-serif';
         ctx.shadowColor = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 20;
 
-        // Dégradé pour le texte
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop(0, color);
         gradient.addColorStop(1, '#ffffff');
         ctx.fillStyle = gradient;
         ctx.fillText(text, canvas.width/2, canvas.height/2 - 4);
 
-        // Ombre portée légère
         ctx.shadowBlur = 0;
         ctx.shadowColor = 'transparent';
         ctx.fillStyle = 'rgba(255,255,255,0.15)';
@@ -974,125 +1093,68 @@
         return sprite;
     }
 
-    // Ajouter les étiquettes sur les sphères
     sphereData.forEach((data) => {
         const sprite = createLabelSprite(data.title, data.color);
         sprite.position.set(data.position.x, data.position.y + 1.8, data.position.z);
         scene.add(sprite);
     });
 
-    // ---------- Gestion des clics sur les sphères (raycaster) ----------
+    // ---------- Gestion des interactions (souris et tactile) ----------
     const raycaster = new THREE.Raycaster();
-    const mouse = new THREE.Vector2();
+    const pointer = new THREE.Vector2();
     let isInsideSphere = false;
-    let currentTarget = null;
-    let targetPosition = new THREE.Vector3();
-    let targetLookAt = new THREE.Vector3();
     let isAnimating = false;
 
-    // Éléments d'affichage du contenu (overlay HTML)
-    const contentOverlay = document.createElement('div');
-    contentOverlay.style.position = 'absolute';
-    contentOverlay.style.top = '50%';
-    contentOverlay.style.left = '50%';
-    contentOverlay.style.transform = 'translate(-50%, -50%)';
-    contentOverlay.style.zIndex = '8';
-    contentOverlay.style.pointerEvents = 'none';
-    contentOverlay.style.opacity = '0';
-    contentOverlay.style.transition = 'opacity 0.8s ease';
-    contentOverlay.style.background = 'rgba(10, 12, 18, 0.85)';
-    contentOverlay.style.backdropFilter = 'blur(16px)';
-    contentOverlay.style.borderRadius = '32px';
-    contentOverlay.style.padding = '40px 48px';
-    contentOverlay.style.maxWidth = '560px';
-    contentOverlay.style.width = '90%';
-    contentOverlay.style.border = '1px solid rgba(100,150,255,0.2)';
-    contentOverlay.style.boxShadow = '0 30px 60px -20px rgba(0,0,0,0.8)';
-    contentOverlay.style.color = '#fff';
-    contentOverlay.style.fontFamily = "'Inter', sans-serif";
-    contentOverlay.style.textAlign = 'left';
-    contentOverlay.style.maxHeight = '80vh';
-    contentOverlay.style.overflowY = 'auto';
-    section.appendChild(contentOverlay);
-
-    // Style du contenu
-    function updateContentStyle(isLight) {
-        if (isLight) {
-            contentOverlay.style.background = 'rgba(240, 244, 250, 0.9)';
-            contentOverlay.style.color = '#1a1a2e';
-            contentOverlay.style.borderColor = 'rgba(0,0,0,0.12)';
-            contentOverlay.style.boxShadow = '0 30px 60px -20px rgba(0,0,0,0.2)';
-        } else {
-            contentOverlay.style.background = 'rgba(10, 12, 18, 0.85)';
-            contentOverlay.style.color = '#fff';
-            contentOverlay.style.borderColor = 'rgba(100,150,255,0.2)';
-            contentOverlay.style.boxShadow = '0 30px 60px -20px rgba(0,0,0,0.8)';
-        }
-    }
-    updateContentStyle(document.body.classList.contains('light-theme'));
-
-    function showContent(data) {
-        const isLight = document.body.classList.contains('light-theme');
-        const textColor = isLight ? '#1a1a2e' : '#ffffff';
-        const mutedColor = isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
-        const bgTag = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)';
-        const borderTag = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
-
-        contentOverlay.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <div style="font-size: 2.8rem; color: ${data.color}; filter: drop-shadow(0 0 12px ${data.color});">
-                    <i class="${data.icon}"></i>
-                </div>
-                <h2 style="font-size: 2.2rem; font-weight: 700; margin: 0; background: linear-gradient(135deg, ${data.color}, ${isLight ? '#1a1a2e' : '#ffffff'}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                    ${data.title}
-                </h2>
-            </div>
-            <p style="font-size: 1.05rem; line-height: 1.7; margin: 0 0 20px 0; opacity: 0.9; color: ${textColor};">
-                ${data.text}
-            </p>
-            <span style="display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 18px; border-radius: 40px; background: ${bgTag}; border: 1px solid ${borderTag}; color: ${mutedColor};">
-                ${data.tag}
-            </span>
-        `;
-
-        contentOverlay.style.opacity = '1';
-        contentOverlay.style.pointerEvents = 'auto';
-        backBtn.classList.add('visible');
-    }
-
-    function hideContent() {
-        contentOverlay.style.opacity = '0';
-        contentOverlay.style.pointerEvents = 'none';
-        backBtn.classList.remove('visible');
-    }
-
-    // Gestion du clic sur le canvas
-    renderer.domElement.addEventListener('click', (event) => {
-        if (isAnimating) return;
-
-        // Calcul des coordonnées du clic
+    // Fonction pour obtenir les coordonnées du pointeur
+    function getPointer(event) {
         const rect = renderer.domElement.getBoundingClientRect();
-        mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-        mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+        let clientX, clientY;
+        if (event.touches) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+        return {
+            x: ((clientX - rect.left) / rect.width) * 2 - 1,
+            y: -((clientY - rect.top) / rect.height) * 2 + 1
+        };
+    }
 
-        raycaster.setFromCamera(mouse, camera);
+    // Gestion du clic / tap
+    function handlePointerDown(event) {
+        if (isAnimating) return;
+        const coords = getPointer(event);
+        pointer.x = coords.x;
+        pointer.y = coords.y;
 
-        // Vérifier les intersections avec les sphères
+        raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(sphereMeshes);
 
         if (intersects.length > 0) {
             const hit = intersects[0].object;
-            if (hit.userData.isSphere) {
+            if (hit.userData.isSphere && !isInsideSphere) {
                 const id = hit.userData.id;
                 const data = sphereData.find(d => d.id === id);
-                if (data && !isInsideSphere) {
-                    // Entrer dans la sphère
+                if (data) {
                     enterSphere(data, hit.position.clone());
                 }
             }
         }
-    });
+    }
 
+    // Écouteurs pour souris et tactile
+    renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+    // Pour mobile, on garde aussi touchstart pour être sûr
+    renderer.domElement.addEventListener('touchstart', (e) => {
+        // On empêche le comportement par défaut pour éviter le scroll pendant l'interaction
+        if (e.touches.length === 1) {
+            // On laisse le pointerdown gérer
+        }
+    }, { passive: true });
+
+    // ---------- Fonctions d'entrée/sortie ----------
     function enterSphere(data, pos) {
         isInsideSphere = true;
         isAnimating = true;
@@ -1100,7 +1162,7 @@
         controls.enableZoom = false;
         controls.rotateSpeed = 0.3;
 
-        // Cacher les étoiles et les anneaux (effet de fondu)
+        // Fondu des étoiles et anneaux
         stars1.material.opacity = 0.2;
         stars2.material.opacity = 0.2;
         ring1.material.opacity = 0.05;
@@ -1108,7 +1170,6 @@
         ring3.material.opacity = 0.05;
         ring4.material.opacity = 0.05;
 
-        // Animation de la caméra vers la sphère
         const targetPos = pos.clone().add(new THREE.Vector3(0, 0.2, 2.2));
         const startPos = camera.position.clone();
         const startTarget = controls.target.clone();
@@ -1120,7 +1181,6 @@
         function animateCamera() {
             const elapsed = Date.now() - startTime;
             const t = Math.min(elapsed / duration, 1);
-            // Easing easeInOutCubic
             const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 
             camera.position.lerpVectors(startPos, targetPos, ease);
@@ -1131,9 +1191,7 @@
                 requestAnimationFrame(animateCamera);
             } else {
                 isAnimating = false;
-                // Afficher le contenu
                 showContent(data);
-                // Mettre en surbrillance la sphère
                 sphereMeshes.forEach(m => {
                     if (m.userData.id === data.id) {
                         m.material.emissiveIntensity = 0.8;
@@ -1146,12 +1204,6 @@
         animateCamera();
     }
 
-    // Bouton retour
-    backBtn.addEventListener('click', () => {
-        if (isAnimating) return;
-        exitSphere();
-    });
-
     function exitSphere() {
         isInsideSphere = false;
         isAnimating = true;
@@ -1161,7 +1213,6 @@
 
         hideContent();
 
-        // Restaurer les opacités
         stars1.material.opacity = 0.8;
         stars2.material.opacity = 0.6;
         ring1.material.opacity = 0.2;
@@ -1169,13 +1220,11 @@
         ring3.material.opacity = 0.25;
         ring4.material.opacity = 0.12;
 
-        // Restaurer les sphères
         sphereMeshes.forEach(m => {
             m.material.emissiveIntensity = 0.15;
             m.material.opacity = 0.85;
         });
 
-        // Revenir à la position initiale
         const startPos = camera.position.clone();
         const startTarget = controls.target.clone();
         const endPos = new THREE.Vector3(0, 2, 14);
@@ -1202,6 +1251,46 @@
         animateReturn();
     }
 
+    // ---------- Affichage du contenu ----------
+    function showContent(data) {
+        const isLight = document.body.classList.contains('light-theme');
+        const textColor = isLight ? '#1a1a2e' : '#ffffff';
+        const mutedColor = isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+        const bgTag = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)';
+        const borderTag = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+
+        contentOverlay.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                <div style="font-size: 2.8rem; color: ${data.color}; filter: drop-shadow(0 0 12px ${data.color});">
+                    <i class="${data.icon}"></i>
+                </div>
+                <h2 style="font-size: 2.2rem; font-weight: 700; margin: 0; background: linear-gradient(135deg, ${data.color}, ${isLight ? '#1a1a2e' : '#ffffff'}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    ${data.title}
+                </h2>
+            </div>
+            <p style="font-size: 1.05rem; line-height: 1.7; margin: 0 0 20px 0; opacity: 0.9; color: ${textColor};">
+                ${data.text}
+            </p>
+            <span style="display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 18px; border-radius: 40px; background: ${bgTag}; border: 1px solid ${borderTag}; color: ${mutedColor};">
+                ${data.tag}
+            </span>
+        `;
+
+        contentOverlay.classList.add('visible');
+        backBtn.classList.add('visible');
+    }
+
+    function hideContent() {
+        contentOverlay.classList.remove('visible');
+        backBtn.classList.remove('visible');
+    }
+
+    // Bouton retour
+    backBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        exitSphere();
+    });
+
     // ---------- Animation de la scène ----------
     function animate() {
         requestAnimationFrame(animate);
@@ -1221,20 +1310,12 @@
         stars2.rotation.y -= 0.0002;
 
         // Rotation des anneaux autour des sphères
-        spheres.forEach((item) => {
-            if (item.ring) {
-                item.ring.rotation.y += item.ring.userData.speed;
-                item.ring.rotation.x += item.ring.userData.speed * 0.3;
-            }
-            if (item.core) {
-                const scale = 1 + Math.sin(Date.now() * 0.003 + item.data.position.x) * 0.1;
-                item.core.scale.set(scale, scale, scale);
-            }
+        ringMeshes.forEach(ring => {
+            ring.rotation.y += ring.userData.speed;
+            ring.rotation.x += ring.userData.speed * 0.3;
         });
 
-        // Mise à jour des contrôles
         controls.update();
-
         renderer.render(scene, camera);
     }
 
@@ -1255,16 +1336,20 @@
     const themeBtn = document.getElementById('themeBtn');
     themeBtn.addEventListener('click', () => {
         const isLight = document.body.classList.contains('light-theme');
-        section.classList.toggle('light-bg', isLight);
-        updateContentStyle(isLight);
-        // Mise à jour des étiquettes : on pourrait régénérer mais on laisse
+        section.style.background = isLight ? '#dce3ef' : '#05070a';
+        // On met à jour le contenu si visible
+        if (contentOverlay.classList.contains('visible')) {
+            // On recharge le contenu avec le nouveau thème
+            // Pour simplifier, on cache et on re-affiche
+            const currentContent = contentOverlay.innerHTML;
+            // On ne fait rien de spécial, car le style est géré par les classes CSS
+        }
     });
 
     // Appliquer le thème initial
     setTimeout(() => {
         const isLight = document.body.classList.contains('light-theme');
-        section.classList.toggle('light-bg', isLight);
-        updateContentStyle(isLight);
+        section.style.background = isLight ? '#dce3ef' : '#05070a';
     }, 100);
 
     // ---------- Nettoyage ----------
@@ -1273,6 +1358,19 @@
     });
 
     renderer.domElement.style.touchAction = 'none';
+
+    // ---------- Bouton retour en haut ----------
+    const scrollTopBtn = document.getElementById('scroll-top-btn');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            scrollTopBtn.classList.add('visible');
+        } else {
+            scrollTopBtn.classList.remove('visible');
+        }
+    });
+    scrollTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
 </script>
 
 <!-- ========== SCRIPTS (gestion slider, copier, pause) ========== -->
