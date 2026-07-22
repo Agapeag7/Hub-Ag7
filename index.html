@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Hub AG7 - réseaux sociaux</title>
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Google Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
         /* ---------- Variables et thèmes ---------- */
         :root {
@@ -18,13 +18,18 @@
             --card-bg: rgba(20, 25, 35, 0.85);
             --card-border: rgba(100, 150, 255, 0.3);
             --text-color: #fff;
-            --text-muted: rgba(255,255,255,0.4);
-            --shadow-color: rgba(0,0,0,0.6);
-            --glow-color: rgba(120,180,255,0.1);
-            --input-bg: rgba(255,255,255,0.1);
-            --controls-bg: rgba(255,255,255,0.05);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.6);
+            --glow-color: rgba(120, 180, 255, 0.1);
+            --input-bg: rgba(255, 255, 255, 0.1);
+            --controls-bg: rgba(255, 255, 255, 0.03);
             --about-title-color: #b0c4ff;
             --about-bg: #05070a;
+            --btn-glass: rgba(255, 255, 255, 0.05);
+            --btn-border: rgba(255, 255, 255, 0.08);
+            --btn-hover: rgba(255, 255, 255, 0.12);
+            --btn-shadow: rgba(0, 0, 0, 0.4);
+            --btn-glow: rgba(100, 150, 255, 0.15);
         }
 
         body.light-theme {
@@ -33,13 +38,18 @@
             --card-bg: rgba(255, 255, 255, 0.85);
             --card-border: rgba(0, 0, 0, 0.15);
             --text-color: #1a1a2e;
-            --text-muted: rgba(0,0,0,0.5);
-            --shadow-color: rgba(0,0,0,0.2);
+            --text-muted: rgba(0, 0, 0, 0.5);
+            --shadow-color: rgba(0, 0, 0, 0.2);
             --glow-color: rgba(0, 0, 0, 0.05);
-            --input-bg: rgba(0,0,0,0.05);
-            --controls-bg: rgba(0,0,0,0.03);
+            --input-bg: rgba(0, 0, 0, 0.05);
+            --controls-bg: rgba(0, 0, 0, 0.02);
             --about-title-color: #3a4a7a;
             --about-bg: #dce3ef;
+            --btn-glass: rgba(0, 0, 0, 0.04);
+            --btn-border: rgba(0, 0, 0, 0.08);
+            --btn-hover: rgba(0, 0, 0, 0.07);
+            --btn-shadow: rgba(0, 0, 0, 0.1);
+            --btn-glow: rgba(60, 100, 200, 0.08);
         }
 
         /* ---------- Base ---------- */
@@ -58,7 +68,7 @@
             overflow-x: hidden;
             font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
             color: var(--text-color);
-            transition: background 0.3s, color 0.3s;
+            transition: background 0.4s, color 0.4s;
         }
 
         /* ---------- Bannière (slider) ---------- */
@@ -69,7 +79,7 @@
             overflow: hidden;
             position: relative;
             background: var(--bg-banner);
-            transition: background 0.3s;
+            transition: background 0.4s;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -93,7 +103,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(100,150,255,0.3);
+            text-shadow: 0 0 30px rgba(100, 150, 255, 0.3);
             display: inline-block;
             padding: 0 20px;
         }
@@ -129,8 +139,12 @@
         }
 
         @keyframes autoRun {
-            from { transform: perspective(1000px) rotateX(-10deg) rotateY(0deg); }
-            to   { transform: perspective(1000px) rotateX(-10deg) rotateY(360deg); }
+            from {
+                transform: perspective(1000px) rotateX(-10deg) rotateY(0deg);
+            }
+            to {
+                transform: perspective(1000px) rotateX(-10deg) rotateY(360deg);
+            }
         }
 
         .banner .slider .item {
@@ -171,7 +185,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 70%);
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1), transparent 70%);
             pointer-events: none;
             opacity: 0.4;
         }
@@ -203,7 +217,7 @@
             border-radius: 30px;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: var(--text-color);
         }
 
@@ -211,7 +225,7 @@
             position: absolute;
             top: 10px;
             right: 10px;
-            background: rgba(255,255,255,0.15);
+            background: rgba(255, 255, 255, 0.15);
             border: none;
             border-radius: 50%;
             width: 32px;
@@ -224,11 +238,11 @@
             justify-content: center;
             transition: background 0.2s;
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 5;
         }
         .card .copy-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
         .card .copy-btn i {
             font-size: 1rem;
@@ -239,7 +253,7 @@
             bottom: calc(100% + 10px);
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             color: #fff;
             padding: 6px 14px;
             border-radius: 20px;
@@ -249,75 +263,194 @@
             pointer-events: none;
             transition: opacity 0.2s;
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .card:hover .tooltip {
             opacity: 1;
         }
         body.light-theme .card .tooltip {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
             color: #1a1a2e;
-            border-color: rgba(0,0,0,0.1);
+            border-color: rgba(0, 0, 0, 0.1);
         }
 
         /* Couleurs icones réseaux */
-        .card[data-network="facebook"] i { color: #1877f2; }
-        .card[data-network="instagram"] i { color: #e4405f; }
-        .card[data-network="tiktok"] i { color: #fff; text-shadow: 0 0 8px #69c9d0; }
-        .card[data-network="linkedin"] i { color: #0a66c2; }
-        .card[data-network="telegram"] i { color: #26a5e4; }
-        .card[data-network="x"] i { color: #fff; }
-        .card[data-network="whatsapp"] i { color: #25d366; }
-        .card[data-network="github"] i { color: #f5f5f5; }
-        .card[data-network="email"] i { color: #ea4335; }
-        .card[data-network="threads"] i { color: #fff; }
-        .card[data-network="pinterest"] i { color: #c8232c; }
+        .card[data-network="facebook"] i {
+            color: #1877f2;
+        }
+        .card[data-network="instagram"] i {
+            color: #e4405f;
+        }
+        .card[data-network="tiktok"] i {
+            color: #fff;
+            text-shadow: 0 0 8px #69c9d0;
+        }
+        .card[data-network="linkedin"] i {
+            color: #0a66c2;
+        }
+        .card[data-network="telegram"] i {
+            color: #26a5e4;
+        }
+        .card[data-network="x"] i {
+            color: #fff;
+        }
+        .card[data-network="whatsapp"] i {
+            color: #25d366;
+        }
+        .card[data-network="github"] i {
+            color: #f5f5f5;
+        }
+        .card[data-network="email"] i {
+            color: #ea4335;
+        }
+        .card[data-network="threads"] i {
+            color: #fff;
+        }
+        .card[data-network="pinterest"] i {
+            color: #c8232c;
+        }
 
         .banner .slider .item:hover {
             transform: rotateY(calc((var(--position) - 1) * (360 / var(--quantity)) * 1deg)) translateZ(530px) scale(1.02);
             z-index: 10;
         }
 
-        /* ---------- Conteneur des contrôles ---------- */
+        /* ============================================================
+           CONTROLS — STYLE RETRAVAILLÉ
+           ============================================================ */
         .controls-wrapper {
             background: var(--controls-bg);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border-top: 1px solid var(--card-border);
-            border-bottom: 1px solid var(--card-border);
-            padding: 16px 20px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--btn-border);
+            border-bottom: 1px solid var(--btn-border);
+            padding: 14px 20px;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            align-items: center;
+            gap: 14px;
             flex-wrap: wrap;
-            transition: background 0.3s;
+            transition: background 0.4s, border-color 0.4s;
             position: relative;
             z-index: 10;
         }
+
         .controls-wrapper button {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid var(--card-border);
-            border-radius: 40px;
-            padding: 10px 24px;
+            position: relative;
+            background: var(--btn-glass);
+            border: 1px solid var(--btn-border);
+            border-radius: 60px;
+            padding: 10px 28px;
             color: var(--text-color);
-            font-size: 0.95rem;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: 'Inter', system-ui, sans-serif;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-family: inherit;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 12px var(--btn-shadow);
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 110px;
         }
-        .controls-wrapper button:hover {
-            background: rgba(255,255,255,0.15);
+
+        /* Effet de bordure lumineuse au hover */
+        .controls-wrapper button::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 60px;
+            padding: 1.5px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.02));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
-        .controls-wrapper button:active {
-            transform: scale(0.95);
+
+        .controls-wrapper button:hover::before {
+            opacity: 1;
         }
+
         .controls-wrapper button i {
             font-size: 1rem;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2em;
+            text-align: center;
+        }
+
+        .controls-wrapper button .btn-label {
+            transition: transform 0.3s ease;
+        }
+
+        /* Hover : lève le bouton + effet de brillance */
+        .controls-wrapper button:hover {
+            background: var(--btn-hover);
+            border-color: rgba(255, 255, 255, 0.18);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 32px var(--btn-shadow), 0 0 40px var(--btn-glow);
+        }
+
+        .controls-wrapper button:hover i {
+            transform: scale(1.15) rotate(-4deg);
+        }
+
+        .controls-wrapper button:hover .btn-label {
+            transform: translateX(2px);
+        }
+
+        /* Active : pression */
+        .controls-wrapper button:active {
+            transform: scale(0.94) translateY(1px);
+            transition-duration: 0.06s;
+            box-shadow: 0 2px 8px var(--btn-shadow);
+        }
+
+        /* Focus-visible pour accessibilité */
+        .controls-wrapper button:focus-visible {
+            outline: 2px solid rgba(100, 150, 255, 0.6);
+            outline-offset: 3px;
+        }
+
+        /* Variante "active" pour le bouton pause quand il est en mode "lecture" */
+        .controls-wrapper button.is-playing {
+            border-color: rgba(100, 200, 255, 0.3);
+            box-shadow: 0 0 24px rgba(100, 150, 255, 0.08);
+        }
+
+        .controls-wrapper button.is-playing i {
+            color: #66bbff;
+        }
+
+        /* Light theme overrides */
+        body.light-theme .controls-wrapper button::before {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.02));
+        }
+
+        body.light-theme .controls-wrapper button:hover {
+            border-color: rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 32px var(--btn-shadow), 0 0 40px var(--btn-glow);
+        }
+
+        body.light-theme .controls-wrapper button.is-playing {
+            border-color: rgba(60, 120, 220, 0.3);
+            box-shadow: 0 0 24px rgba(60, 120, 220, 0.1);
+        }
+
+        body.light-theme .controls-wrapper button.is-playing i {
+            color: #3a7ac8;
         }
 
         /* ============================================================
@@ -329,7 +462,7 @@
             height: 100vh;
             overflow: hidden;
             background: var(--about-bg);
-            transition: background 0.3s;
+            transition: background 0.4s;
             cursor: grab;
         }
 
@@ -346,7 +479,6 @@
             display: block;
         }
 
-        /* Overlay de titre (SEO / accessibilité) */
         .about-overlay-title {
             position: absolute;
             top: 30px;
@@ -363,8 +495,8 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             opacity: 0.9;
-            text-shadow: 0 0 40px rgba(100,150,255,0.2);
-            transition: background 0.3s;
+            text-shadow: 0 0 40px rgba(100, 150, 255, 0.2);
+            transition: background 0.4s;
         }
         body.light-theme .about-overlay-title {
             background: linear-gradient(135deg, var(--about-title-color), #1a1a2e);
@@ -388,7 +520,6 @@
             opacity: 0.7;
         }
 
-        /* Indicateur de scroll / interaction */
         .scroll-hint {
             position: absolute;
             bottom: 30px;
@@ -409,22 +540,31 @@
         }
 
         @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
-            40% { transform: translateX(-50%) translateY(-10px); }
-            60% { transform: translateX(-50%) translateY(-5px); }
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
         }
 
-        /* Bouton retour (visible quand on est à l'intérieur d'une sphère) */
         #back-btn {
             position: absolute;
             bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            background: rgba(255,255,255,0.12);
+            background: rgba(255, 255, 255, 0.12);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 40px;
             padding: 12px 28px;
             color: #fff;
@@ -443,7 +583,7 @@
             pointer-events: auto;
         }
         #back-btn:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             transform: translateX(-50%) scale(1.04);
         }
         #back-btn i {
@@ -452,14 +592,13 @@
 
         body.light-theme #back-btn {
             color: #1a1a2e;
-            background: rgba(0,0,0,0.08);
-            border-color: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.15);
         }
         body.light-theme #back-btn:hover {
-            background: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.15);
         }
 
-        /* Overlay de contenu (affiché à l'intérieur de la sphère) */
         #content-overlay {
             position: absolute;
             top: 50%;
@@ -476,8 +615,8 @@
             padding: 40px 48px;
             max-width: 560px;
             width: 90%;
-            border: 1px solid rgba(100,150,255,0.2);
-            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.8);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.8);
             color: #fff;
             font-family: 'Inter', sans-serif;
             text-align: left;
@@ -492,11 +631,10 @@
         body.light-theme #content-overlay {
             background: rgba(240, 244, 250, 0.9);
             color: #1a1a2e;
-            border-color: rgba(0,0,0,0.12);
-            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.2);
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.2);
         }
 
-        /* Scrollbar personnalisée pour le contenu */
         #content-overlay::-webkit-scrollbar {
             width: 6px;
         }
@@ -504,23 +642,22 @@
             background: transparent;
         }
         #content-overlay::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 10px;
         }
         body.light-theme #content-overlay::-webkit-scrollbar-thumb {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
         }
 
-        /* ---------- Bouton retour en haut ---------- */
         #scroll-top-btn {
             position: fixed;
             bottom: 30px;
             right: 30px;
             z-index: 100;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             width: 52px;
             height: 52px;
@@ -540,18 +677,17 @@
         }
         #scroll-top-btn:hover {
             transform: scale(1.08);
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
         }
         body.light-theme #scroll-top-btn {
-            background: rgba(0,0,0,0.06);
-            border-color: rgba(0,0,0,0.15);
+            background: rgba(0, 0, 0, 0.06);
+            border-color: rgba(0, 0, 0, 0.15);
             color: #1a1a2e;
         }
         body.light-theme #scroll-top-btn:hover {
-            background: rgba(0,0,0,0.12);
+            background: rgba(0, 0, 0, 0.12);
         }
 
-        /* ---------- Footer ---------- */
         .main-footer {
             text-align: center;
             padding: 18px 20px;
@@ -560,7 +696,7 @@
             font-family: monospace;
             border-top: 1px solid var(--card-border);
             background: var(--bg-page);
-            transition: background 0.3s;
+            transition: background 0.4s;
         }
 
         /* ---------- Responsive ---------- */
@@ -601,8 +737,12 @@
                 padding: 4px 10px;
             }
             @keyframes autoRun {
-                from { transform: perspective(800px) rotateX(-6deg) rotateY(0deg); }
-                to   { transform: perspective(800px) rotateX(-6deg) rotateY(360deg); }
+                from {
+                    transform: perspective(800px) rotateX(-6deg) rotateY(0deg);
+                }
+                to {
+                    transform: perspective(800px) rotateX(-6deg) rotateY(360deg);
+                }
             }
             .header h1 {
                 font-size: 1.4rem;
@@ -633,6 +773,19 @@
                 font-size: 1.2rem;
                 bottom: 20px;
                 right: 20px;
+            }
+            .controls-wrapper {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+            .controls-wrapper button {
+                padding: 8px 18px;
+                font-size: 0.78rem;
+                min-width: 80px;
+                gap: 6px;
+            }
+            .controls-wrapper button i {
+                font-size: 0.85rem;
             }
         }
 
@@ -674,304 +827,317 @@
                 bottom: 16px;
                 right: 16px;
             }
+            .controls-wrapper {
+                padding: 10px 12px;
+                gap: 8px;
+            }
+            .controls-wrapper button {
+                padding: 6px 14px;
+                font-size: 0.7rem;
+                min-width: 64px;
+                gap: 5px;
+                border-radius: 40px;
+            }
+            .controls-wrapper button i {
+                font-size: 0.75rem;
+            }
+            .controls-wrapper button .btn-label {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
-<!-- ========== BANNER SLIDER ========== -->
-<div class="banner">
-    <div class="header">
-        <h1>Hub AG7</h1>
-        <div class="sub">Tous mes réseaux sociaux</div>
+    <!-- ========== BANNER SLIDER ========== -->
+    <div class="banner">
+        <div class="header">
+            <h1>Hub AG7</h1>
+            <div class="sub">Tous mes réseaux sociaux</div>
+        </div>
+
+        <div class="slider" style="--quantity: 11" id="slider">
+            <!-- Facebook -->
+            <div class="item" style="--position: 1">
+                <div class="card" data-network="facebook" data-link="https://www.facebook.com/profile.php?id=100077852277023" role="button" tabindex="0" aria-label="Facebook, @agape_ag7">
+                    <i class="fab fa-facebook"></i>
+                    <span class="network-name">Facebook</span>
+                    <span class="handle">@agape_ag7</span>
+                    <button class="copy-btn" aria-label="Copier le lien Facebook" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir Facebook</div>
+                </div>
+            </div>
+            <!-- Instagram -->
+            <div class="item" style="--position: 2">
+                <div class="card" data-network="instagram" data-link="https://www.instagram.com/agap_mh?igsh=Zm04OGFkNmliMHJq" role="button" tabindex="0" aria-label="Instagram, @agap_mh">
+                    <i class="fab fa-instagram"></i>
+                    <span class="network-name">Instagram</span>
+                    <span class="handle">@agap_mh</span>
+                    <button class="copy-btn" aria-label="Copier le lien Instagram" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir Instagram</div>
+                </div>
+            </div>
+            <!-- TikTok -->
+            <div class="item" style="--position: 3">
+                <div class="card" data-network="tiktok" data-link="https://tiktok.com/@ag7_fx" role="button" tabindex="0" aria-label="TikTok, @ag7_fx">
+                    <i class="fab fa-tiktok"></i>
+                    <span class="network-name">TikTok</span>
+                    <span class="handle">@ag7_fx</span>
+                    <button class="copy-btn" aria-label="Copier le lien TikTok" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir TikTok</div>
+                </div>
+            </div>
+            <!-- LinkedIn -->
+            <div class="item" style="--position: 4">
+                <div class="card" data-network="linkedin" data-link="https://www.linkedin.com/in/agape-ag7-9605bb378" role="button" tabindex="0" aria-label="LinkedIn, @agape_ag7">
+                    <i class="fab fa-linkedin"></i>
+                    <span class="network-name">LinkedIn</span>
+                    <span class="handle">@agape_ag7</span>
+                    <button class="copy-btn" aria-label="Copier le lien LinkedIn" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir LinkedIn</div>
+                </div>
+            </div>
+            <!-- Telegram -->
+            <div class="item" style="--position: 5">
+                <div class="card" data-network="telegram" data-link="https://t.me/Ag7_mhy" role="button" tabindex="0" aria-label="Telegram, @ag7_mhy">
+                    <i class="fab fa-telegram"></i>
+                    <span class="network-name">Telegram</span>
+                    <span class="handle">@ag7_mhy</span>
+                    <button class="copy-btn" aria-label="Copier le lien Telegram" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir Telegram</div>
+                </div>
+            </div>
+            <!-- X -->
+            <div class="item" style="--position: 6">
+                <div class="card" data-network="x" data-link="https://x.com/AgapeAg7" role="button" tabindex="0" aria-label="X, @AgapeAg7">
+                    <i class="fab fa-x-twitter"></i>
+                    <span class="network-name">X</span>
+                    <span class="handle">@AgapeAg7</span>
+                    <button class="copy-btn" aria-label="Copier le lien X" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir X</div>
+                </div>
+            </div>
+            <!-- WhatsApp -->
+            <div class="item" style="--position: 7">
+                <div class="card" data-network="whatsapp" data-link="https://wa.me/254106097625" role="button" tabindex="0" aria-label="WhatsApp, +254106097625">
+                    <i class="fab fa-whatsapp"></i>
+                    <span class="network-name">WhatsApp</span>
+                    <span class="handle">+254106097625</span>
+                    <button class="copy-btn" aria-label="Copier le lien WhatsApp" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir WhatsApp</div>
+                </div>
+            </div>
+            <!-- GitHub -->
+            <div class="item" style="--position: 8">
+                <div class="card" data-network="github" data-link="https://github.com/Agapeag7" role="button" tabindex="0" aria-label="GitHub, @ag7">
+                    <i class="fab fa-github"></i>
+                    <span class="network-name">GitHub</span>
+                    <span class="handle">@ag7</span>
+                    <button class="copy-btn" aria-label="Copier le lien GitHub" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir GitHub</div>
+                </div>
+            </div>
+            <!-- Email -->
+            <div class="item" style="--position: 9">
+                <div class="card" data-network="email" data-link="mailto:agapeag7@gmail.com" role="button" tabindex="0" aria-label="Email, agapeag7@gmail.com">
+                    <i class="fas fa-envelope"></i>
+                    <span class="network-name">Email</span>
+                    <span class="handle">agapeag7@gmail.com</span>
+                    <button class="copy-btn" aria-label="Copier l'adresse email" title="Copier l'email"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Envoyer un email</div>
+                </div>
+            </div>
+            <!-- Threads -->
+            <div class="item" style="--position: 10">
+                <div class="card" data-network="threads" data-link="https://www.threads.com/@agap_mh" role="button" tabindex="0" aria-label="Threads, @agap_mh">
+                    <i class="fab fa-threads"></i>
+                    <span class="network-name">Threads</span>
+                    <span class="handle">@agap_mh</span>
+                    <button class="copy-btn" aria-label="Copier le lien Threads" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir Threads</div>
+                </div>
+            </div>
+            <!-- Pinterest -->
+            <div class="item" style="--position: 11">
+                <div class="card" data-network="pinterest" data-link="https://pin.it/1SHyVValE" role="button" tabindex="0" aria-label="Pinterest, @ag7">
+                    <i class="fab fa-pinterest"></i>
+                    <span class="network-name">Pinterest</span>
+                    <span class="handle">@ag7</span>
+                    <button class="copy-btn" aria-label="Copier le lien Pinterest" title="Copier le lien"><i class="fas fa-copy"></i></button>
+                    <div class="tooltip">Ouvrir Pinterest</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="slider" style="--quantity: 11" id="slider">
-        <!-- Facebook -->
-        <div class="item" style="--position: 1">
-            <div class="card" data-network="facebook" data-link="https://www.facebook.com/profile.php?id=100077852277023" role="button" tabindex="0" aria-label="Facebook, @agape_ag7">
-                <i class="fab fa-facebook"></i>
-                <span class="network-name">Facebook</span>
-                <span class="handle">@agape_ag7</span>
-                <button class="copy-btn" aria-label="Copier le lien Facebook" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir Facebook</div>
-            </div>
-        </div>
-        <!-- Instagram -->
-        <div class="item" style="--position: 2">
-            <div class="card" data-network="instagram" data-link="https://www.instagram.com/agap_mh?igsh=Zm04OGFkNmliMHJq" role="button" tabindex="0" aria-label="Instagram, @agap_mh">
-                <i class="fab fa-instagram"></i>
-                <span class="network-name">Instagram</span>
-                <span class="handle">@agap_mh</span>
-                <button class="copy-btn" aria-label="Copier le lien Instagram" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir Instagram</div>
-            </div>
-        </div>
-        <!-- TikTok -->
-        <div class="item" style="--position: 3">
-            <div class="card" data-network="tiktok" data-link="https://tiktok.com/@ag7_fx" role="button" tabindex="0" aria-label="TikTok, @ag7_fx">
-                <i class="fab fa-tiktok"></i>
-                <span class="network-name">TikTok</span>
-                <span class="handle">@ag7_fx</span>
-                <button class="copy-btn" aria-label="Copier le lien TikTok" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir TikTok</div>
-            </div>
-        </div>
-        <!-- LinkedIn -->
-        <div class="item" style="--position: 4">
-            <div class="card" data-network="linkedin" data-link="https://www.linkedin.com/in/agape-ag7-9605bb378" role="button" tabindex="0" aria-label="LinkedIn, @agape_ag7">
-                <i class="fab fa-linkedin"></i>
-                <span class="network-name">LinkedIn</span>
-                <span class="handle">@agape_ag7</span>
-                <button class="copy-btn" aria-label="Copier le lien LinkedIn" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir LinkedIn</div>
-            </div>
-        </div>
-        <!-- Telegram -->
-        <div class="item" style="--position: 5">
-            <div class="card" data-network="telegram" data-link="https://t.me/Ag7_mhy" role="button" tabindex="0" aria-label="Telegram, @ag7_mhy">
-                <i class="fab fa-telegram"></i>
-                <span class="network-name">Telegram</span>
-                <span class="handle">@ag7_mhy</span>
-                <button class="copy-btn" aria-label="Copier le lien Telegram" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir Telegram</div>
-            </div>
-        </div>
-        <!-- X -->
-        <div class="item" style="--position: 6">
-            <div class="card" data-network="x" data-link="https://x.com/AgapeAg7" role="button" tabindex="0" aria-label="X, @AgapeAg7">
-                <i class="fab fa-x-twitter"></i>
-                <span class="network-name">X</span>
-                <span class="handle">@AgapeAg7</span>
-                <button class="copy-btn" aria-label="Copier le lien X" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir X</div>
-            </div>
-        </div>
-        <!-- WhatsApp -->
-        <div class="item" style="--position: 7">
-            <div class="card" data-network="whatsapp" data-link="https://wa.me/254106097625" role="button" tabindex="0" aria-label="WhatsApp, +254106097625">
-                <i class="fab fa-whatsapp"></i>
-                <span class="network-name">WhatsApp</span>
-                <span class="handle">+254106097625</span>
-                <button class="copy-btn" aria-label="Copier le lien WhatsApp" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir WhatsApp</div>
-            </div>
-        </div>
-        <!-- GitHub -->
-        <div class="item" style="--position: 8">
-            <div class="card" data-network="github" data-link="https://github.com/Agapeag7" role="button" tabindex="0" aria-label="GitHub, @ag7">
-                <i class="fab fa-github"></i>
-                <span class="network-name">GitHub</span>
-                <span class="handle">@ag7</span>
-                <button class="copy-btn" aria-label="Copier le lien GitHub" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir GitHub</div>
-            </div>
-        </div>
-        <!-- Email -->
-        <div class="item" style="--position: 9">
-            <div class="card" data-network="email" data-link="mailto:agapeag7@gmail.com" role="button" tabindex="0" aria-label="Email, agapeag7@gmail.com">
-                <i class="fas fa-envelope"></i>
-                <span class="network-name">Email</span>
-                <span class="handle">agapeag7@gmail.com</span>
-                <button class="copy-btn" aria-label="Copier l'adresse email" title="Copier l'email"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Envoyer un email</div>
-            </div>
-        </div>
-        <!-- Threads -->
-        <div class="item" style="--position: 10">
-            <div class="card" data-network="threads" data-link="https://www.threads.com/@agap_mh" role="button" tabindex="0" aria-label="Threads, @agap_mh">
-                <i class="fab fa-threads"></i>
-                <span class="network-name">Threads</span>
-                <span class="handle">@agap_mh</span>
-                <button class="copy-btn" aria-label="Copier le lien Threads" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir Threads</div>
-            </div>
-        </div>
-        <!-- Pinterest -->
-        <div class="item" style="--position: 11">
-            <div class="card" data-network="pinterest" data-link="https://pin.it/1SHyVValE" role="button" tabindex="0" aria-label="Pinterest, @ag7">
-                <i class="fab fa-pinterest"></i>
-                <span class="network-name">Pinterest</span>
-                <span class="handle">@ag7</span>
-                <button class="copy-btn" aria-label="Copier le lien Pinterest" title="Copier le lien"><i class="fas fa-copy"></i></button>
-                <div class="tooltip">Ouvrir Pinterest</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========== CONTRÔLES ========== -->
-<div class="controls-wrapper" id="controlsWrapper">
-    <button id="pauseBtn" aria-label="Mettre en pause la rotation">
-        <i class="fas fa-pause"></i> Pause
-    </button>
-    <button id="themeBtn" aria-label="Basculer le thème clair/sombre">
-        <i class="fas fa-moon"></i> Thème
-    </button>
-</div>
-
-<!-- ========== SECTION "À PROPOS" - UNIVERS 3D ========== -->
-<section id="about-section">
-    <!-- Overlay texte -->
-    <div class="about-overlay-title">À propos · Ag7</div>
-    <div class="about-overlay-sub">Cliquez sur une sphère pour explorer</div>
-    <div class="scroll-hint">
-        <span>Déplacez-vous dans l'univers</span>
-        <i class="fas fa-chevron-down"></i>
+    <!-- ========== CONTRÔLES RETRAVAILLÉS ========== -->
+    <div class="controls-wrapper" id="controlsWrapper">
+        <button id="pauseBtn" aria-label="Mettre en pause la rotation">
+            <i class="fas fa-pause"></i>
+            <span class="btn-label">Pause</span>
+        </button>
+        <button id="themeBtn" aria-label="Basculer le thème clair/sombre">
+            <i class="fas fa-moon"></i>
+            <span class="btn-label">Thème</span>
+        </button>
     </div>
 
-    <!-- Bouton retour -->
-    <button id="back-btn">
-        <i class="fas fa-arrow-left"></i> Retour à l'univers
+    <!-- ========== SECTION "À PROPOS" - UNIVERS 3D ========== -->
+    <section id="about-section">
+        <div class="about-overlay-title">À propos · Ag7</div>
+        <div class="about-overlay-sub">Cliquez sur une sphère pour explorer</div>
+        <div class="scroll-hint">
+            <span>Déplacez-vous dans l'univers</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+
+        <button id="back-btn">
+            <i class="fas fa-arrow-left"></i> Retour à l'univers
+        </button>
+
+        <div id="content-overlay"></div>
+
+        <canvas id="about-canvas"></canvas>
+    </section>
+
+    <!-- ========== PIED DE PAGE ========== -->
+    <div class="main-footer">
+        Survolez le slider pour mettre en pause · cliquez sur une carte
+    </div>
+
+    <!-- ========== BOUTON RETOUR EN HAUT ========== -->
+    <button id="scroll-top-btn" aria-label="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- Overlay contenu -->
-    <div id="content-overlay"></div>
-
-    <!-- Canvas Three.js -->
-    <canvas id="about-canvas"></canvas>
-</section>
-
-<!-- ========== PIED DE PAGE ========== -->
-<div class="main-footer">
-    Survolez le slider pour mettre en pause · cliquez sur une carte
-</div>
-
-<!-- ========== BOUTON RETOUR EN HAUT ========== -->
-<button id="scroll-top-btn" aria-label="Retour en haut">
-    <i class="fas fa-arrow-up"></i>
-</button>
-
-<!-- ========== THREE.JS ========== -->
-<script type="importmap">
-    {
-        "imports": {
-            "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-            "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-        }
-    }
-</script>
-
-<script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-    // ---------- Configuration ----------
-    const section = document.getElementById('about-section');
-    const canvas = document.getElementById('about-canvas');
-    const backBtn = document.getElementById('back-btn');
-    const contentOverlay = document.getElementById('content-overlay');
-
-    // Dimensions
-    let width = section.clientWidth;
-    let height = section.clientHeight;
-
-    // ---------- Scène ----------
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x05070a);
-
-    // ---------- Caméra ----------
-    const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.set(0, 2, 14);
-    camera.lookAt(0, 0, 0);
-
-    // ---------- Renderer ----------
-    const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
-        antialias: true,
-        alpha: false
-    });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-    // ---------- Contrôles Orbit ----------
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 0.6;
-    controls.enableZoom = true;
-    controls.zoomSpeed = 0.6;
-    controls.rotateSpeed = 0.5;
-    controls.target.set(0, 0, 0);
-    controls.maxPolarAngle = Math.PI / 2.2;
-    controls.minDistance = 3;
-    controls.maxDistance = 20;
-
-    // ---------- Lumières ----------
-    const ambientLight = new THREE.AmbientLight(0x40406b, 0.5);
-    scene.add(ambientLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight.position.set(5, 10, 7);
-    dirLight.castShadow = true;
-    scene.add(dirLight);
-
-    const backLight = new THREE.DirectionalLight(0x4488ff, 0.4);
-    backLight.position.set(-5, 0, -5);
-    scene.add(backLight);
-
-    const pointLight = new THREE.PointLight(0x6688ff, 0.6, 20);
-    pointLight.position.set(0, 3, 4);
-    scene.add(pointLight);
-
-    // ---------- Étoiles (fond) ----------
-    function createStars(count, size, color, radiusMin, radiusMax) {
-        const geo = new THREE.BufferGeometry();
-        const pos = new Float32Array(count * 3);
-        for (let i = 0; i < count * 3; i += 3) {
-            const r = radiusMin + Math.random() * (radiusMax - radiusMin);
-            const theta = Math.random() * Math.PI * 2;
-            const phi = Math.acos((Math.random() * 2) - 1);
-            pos[i] = r * Math.sin(phi) * Math.cos(theta);
-            pos[i+1] = r * Math.sin(phi) * Math.sin(theta);
-            pos[i+2] = r * Math.cos(phi);
-        }
-        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-        const mat = new THREE.PointsMaterial({
-            color: color,
-            size: size,
-            transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
-        });
-        const points = new THREE.Points(geo, mat);
-        scene.add(points);
-        return points;
-    }
-
-    const stars1 = createStars(1500, 0.12, 0x88aaff, 20, 50);
-    const stars2 = createStars(800, 0.06, 0xccddff, 12, 28);
-
-    // ---------- Anneaux décoratifs ----------
-    function createRing(radius, tube, color, opacity, pos, rot) {
-        const geo = new THREE.TorusGeometry(radius, tube, 32, 64);
-        const mat = new THREE.MeshStandardMaterial({
-            color: color,
-            emissive: color,
-            emissiveIntensity: 0.12,
-            transparent: true,
-            opacity: opacity,
-            roughness: 0.3,
-            metalness: 0.7
-        });
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.set(pos.x, pos.y, pos.z);
-        mesh.rotation.set(rot.x, rot.y, rot.z);
-        scene.add(mesh);
-        return mesh;
-    }
-
-    const ring1 = createRing(3.2, 0.04, 0x4488ff, 0.2, { x: 0, y: 0, z: 0 }, { x: Math.PI/3, y: 0.2, z: 0 });
-    const ring2 = createRing(4.0, 0.03, 0x88aaff, 0.15, { x: 1.5, y: -0.6, z: 1.0 }, { x: 0.7, y: 0.4, z: 0.3 });
-    const ring3 = createRing(2.8, 0.025, 0x66aaff, 0.25, { x: -1.2, y: 0.9, z: -0.8 }, { x: 0.2, y: 0.8, z: 0.5 });
-    const ring4 = createRing(4.8, 0.02, 0x3366cc, 0.12, { x: -2.0, y: -0.4, z: -1.5 }, { x: 0.5, y: 0.1, z: 0.7 });
-
-    // ---------- Données des sphères ----------
-    const sphereData = [
+    <!-- ========== THREE.JS ========== -->
+    <script type="importmap">
         {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // ---------- Configuration ----------
+        const section = document.getElementById('about-section');
+        const canvas = document.getElementById('about-canvas');
+        const backBtn = document.getElementById('back-btn');
+        const contentOverlay = document.getElementById('content-overlay');
+
+        let width = section.clientWidth;
+        let height = section.clientHeight;
+
+        // ---------- Scène ----------
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x05070a);
+
+        // ---------- Caméra ----------
+        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.set(0, 2, 14);
+        camera.lookAt(0, 0, 0);
+
+        // ---------- Renderer ----------
+        const renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            alpha: false
+        });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // ---------- Contrôles Orbit ----------
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.06;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.6;
+        controls.enableZoom = true;
+        controls.zoomSpeed = 0.6;
+        controls.rotateSpeed = 0.5;
+        controls.target.set(0, 0, 0);
+        controls.maxPolarAngle = Math.PI / 2.2;
+        controls.minDistance = 3;
+        controls.maxDistance = 20;
+
+        // ---------- Lumières ----------
+        const ambientLight = new THREE.AmbientLight(0x40406b, 0.5);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(5, 10, 7);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        const backLight = new THREE.DirectionalLight(0x4488ff, 0.4);
+        backLight.position.set(-5, 0, -5);
+        scene.add(backLight);
+
+        const pointLight = new THREE.PointLight(0x6688ff, 0.6, 20);
+        pointLight.position.set(0, 3, 4);
+        scene.add(pointLight);
+
+        // ---------- Étoiles ----------
+        function createStars(count, size, color, radiusMin, radiusMax) {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(count * 3);
+            for (let i = 0; i < count * 3; i += 3) {
+                const r = radiusMin + Math.random() * (radiusMax - radiusMin);
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                pos[i] = r * Math.sin(phi) * Math.cos(theta);
+                pos[i + 1] = r * Math.sin(phi) * Math.sin(theta);
+                pos[i + 2] = r * Math.cos(phi);
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({
+                color: color,
+                size: size,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+            const points = new THREE.Points(geo, mat);
+            scene.add(points);
+            return points;
+        }
+
+        const stars1 = createStars(1500, 0.12, 0x88aaff, 20, 50);
+        const stars2 = createStars(800, 0.06, 0xccddff, 12, 28);
+
+        // ---------- Anneaux décoratifs ----------
+        function createRing(radius, tube, color, opacity, pos, rot) {
+            const geo = new THREE.TorusGeometry(radius, tube, 32, 64);
+            const mat = new THREE.MeshStandardMaterial({
+                color: color,
+                emissive: color,
+                emissiveIntensity: 0.12,
+                transparent: true,
+                opacity: opacity,
+                roughness: 0.3,
+                metalness: 0.7
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(pos.x, pos.y, pos.z);
+            mesh.rotation.set(rot.x, rot.y, rot.z);
+            scene.add(mesh);
+            return mesh;
+        }
+
+        const ring1 = createRing(3.2, 0.04, 0x4488ff, 0.2, { x: 0, y: 0, z: 0 }, { x: Math.PI / 3, y: 0.2, z: 0 });
+        const ring2 = createRing(4.0, 0.03, 0x88aaff, 0.15, { x: 1.5, y: -0.6, z: 1.0 }, { x: 0.7, y: 0.4, z: 0.3 });
+        const ring3 = createRing(2.8, 0.025, 0x66aaff, 0.25, { x: -1.2, y: 0.9, z: -0.8 }, { x: 0.2, y: 0.8, z: 0.5 });
+        const ring4 = createRing(4.8, 0.02, 0x3366cc, 0.12, { x: -2.0, y: -0.4, z: -1.5 }, { x: 0.5, y: 0.1, z: 0.7 });
+
+        // ---------- Données des sphères ----------
+        const sphereData = [{
             id: 'expertise',
             title: 'Expertise',
             icon: 'fas fa-cogs',
@@ -979,8 +1145,7 @@
             position: { x: -4.2, y: 0.8, z: 0 },
             text: 'Développeur informatique et designer graphique, spécialisé dans la conception de solutions numériques modernes, performantes et intuitives. Une approche axée sur l\'innovation, la qualité et l\'expérience utilisateur permet de transformer des idées en solutions fiables, esthétiques et efficaces.',
             tag: 'Innovation & Qualité'
-        },
-        {
+        }, {
             id: 'competences',
             title: 'Compétences',
             icon: 'fas fa-code',
@@ -988,8 +1153,7 @@
             position: { x: 0, y: -0.5, z: 4.0 },
             text: 'Compétences en développement d\'applications de bureau, développement web, programmation Python, conception d\'interfaces utilisateur (UI), design graphique, identité visuelle, automatisation de processus, intelligence artificielle, apprentissage automatique, gestion de bases de données, optimisation des performances, architecture logicielle, résolution de problèmes techniques et création d\'expériences numériques centrées sur l\'utilisateur.',
             tag: 'Full‑stack & IA'
-        },
-        {
+        }, {
             id: 'engagement',
             title: 'Engagement',
             icon: 'fas fa-handshake',
@@ -997,467 +1161,445 @@
             position: { x: 4.2, y: 0.6, z: -1.5 },
             text: 'Chaque réalisation est développée avec un souci constant de qualité, de performance et de précision. L\'objectif est de proposer des solutions innovantes, évolutives et adaptées aux besoins des utilisateurs, tout en respectant les meilleures pratiques du développement logiciel et du design.',
             tag: 'Excellence & Éthique'
-        }
-    ];
+        }];
 
-    // ---------- Création des sphères interactives ----------
-    const sphereMeshes = [];
-    const ringMeshes = [];
+        // ---------- Création des sphères ----------
+        const sphereMeshes = [];
+        const ringMeshes = [];
 
-    sphereData.forEach((data) => {
-        // Sphère principale
-        const geo = new THREE.SphereGeometry(1.2, 48, 48);
-        const mat = new THREE.MeshStandardMaterial({
-            color: data.color,
-            emissive: data.color,
-            emissiveIntensity: 0.15,
-            roughness: 0.2,
-            metalness: 0.4,
-            transparent: true,
-            opacity: 0.85
+        sphereData.forEach((data) => {
+            const geo = new THREE.SphereGeometry(1.2, 48, 48);
+            const mat = new THREE.MeshStandardMaterial({
+                color: data.color,
+                emissive: data.color,
+                emissiveIntensity: 0.15,
+                roughness: 0.2,
+                metalness: 0.4,
+                transparent: true,
+                opacity: 0.85
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(data.position.x, data.position.y, data.position.z);
+            mesh.castShadow = true;
+            mesh.userData = { id: data.id, isSphere: true };
+            scene.add(mesh);
+            sphereMeshes.push(mesh);
+
+            const ringGeo = new THREE.TorusGeometry(1.45, 0.025, 16, 32);
+            const ringMat = new THREE.MeshStandardMaterial({
+                color: data.color,
+                emissive: data.color,
+                emissiveIntensity: 0.2,
+                transparent: true,
+                opacity: 0.4
+            });
+            const ring = new THREE.Mesh(ringGeo, ringMat);
+            ring.position.set(data.position.x, data.position.y, data.position.z);
+            ring.rotation.x = Math.random() * Math.PI;
+            ring.rotation.y = Math.random() * Math.PI;
+            ring.userData = { parentId: data.id, speed: 0.005 + Math.random() * 0.005 };
+            scene.add(ring);
+            ringMeshes.push(ring);
+
+            const coreGeo = new THREE.SphereGeometry(0.25, 16, 16);
+            const coreMat = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                emissive: data.color,
+                emissiveIntensity: 0.8
+            });
+            const core = new THREE.Mesh(coreGeo, coreMat);
+            core.position.set(data.position.x, data.position.y, data.position.z);
+            scene.add(core);
+            core.userData = { parentId: data.id };
         });
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.position.set(data.position.x, data.position.y, data.position.z);
-        mesh.castShadow = true;
-        mesh.userData = { id: data.id, isSphere: true };
-        scene.add(mesh);
-        sphereMeshes.push(mesh);
 
-        // Anneau autour de la sphère (effet d'orbite)
-        const ringGeo = new THREE.TorusGeometry(1.45, 0.025, 16, 32);
-        const ringMat = new THREE.MeshStandardMaterial({
-            color: data.color,
-            emissive: data.color,
-            emissiveIntensity: 0.2,
-            transparent: true,
-            opacity: 0.4
-        });
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.position.set(data.position.x, data.position.y, data.position.z);
-        ring.rotation.x = Math.random() * Math.PI;
-        ring.rotation.y = Math.random() * Math.PI;
-        ring.userData = { parentId: data.id, speed: 0.005 + Math.random() * 0.005 };
-        scene.add(ring);
-        ringMeshes.push(ring);
+        // ---------- Étiquettes ----------
+        function createLabelSprite(text, color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
 
-        // Petit noyau lumineux à l'intérieur
-        const coreGeo = new THREE.SphereGeometry(0.25, 16, 16);
-        const coreMat = new THREE.MeshStandardMaterial({
-            color: 0xffffff,
-            emissive: data.color,
-            emissiveIntensity: 0.8
-        });
-        const core = new THREE.Mesh(coreGeo, coreMat);
-        core.position.set(data.position.x, data.position.y, data.position.z);
-        scene.add(core);
-        // On stocke le core pour l'animer
-        core.userData = { parentId: data.id };
-    });
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = 'Bold 52px Inter, system-ui, sans-serif';
+            ctx.shadowColor = 'rgba(0,0,0,0.8)';
+            ctx.shadowBlur = 20;
 
-    // ---------- Étiquettes (sprites) ----------
-    function createLabelSprite(text, color) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 128;
-        const ctx = canvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, color);
+            gradient.addColorStop(1, '#ffffff');
+            ctx.fillStyle = gradient;
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2 - 4);
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.font = 'Bold 52px Inter, system-ui, sans-serif';
-        ctx.shadowColor = 'rgba(0,0,0,0.8)';
-        ctx.shadowBlur = 20;
+            ctx.shadowBlur = 0;
+            ctx.shadowColor = 'transparent';
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.fillText(text, canvas.width / 2 + 2, canvas.height / 2 + 2);
 
-        const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-        gradient.addColorStop(0, color);
-        gradient.addColorStop(1, '#ffffff');
-        ctx.fillStyle = gradient;
-        ctx.fillText(text, canvas.width/2, canvas.height/2 - 4);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.needsUpdate = true;
 
-        ctx.shadowBlur = 0;
-        ctx.shadowColor = 'transparent';
-        ctx.fillStyle = 'rgba(255,255,255,0.15)';
-        ctx.fillText(text, canvas.width/2 + 2, canvas.height/2 + 2);
-
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.needsUpdate = true;
-
-        const material = new THREE.SpriteMaterial({
-            map: texture,
-            transparent: true,
-            depthTest: false,
-            depthWrite: false
-        });
-        const sprite = new THREE.Sprite(material);
-        sprite.scale.set(2.8, 0.7, 1);
-        return sprite;
-    }
-
-    sphereData.forEach((data) => {
-        const sprite = createLabelSprite(data.title, data.color);
-        sprite.position.set(data.position.x, data.position.y + 1.8, data.position.z);
-        scene.add(sprite);
-    });
-
-    // ---------- Gestion des interactions (souris et tactile) ----------
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-    let isInsideSphere = false;
-    let isAnimating = false;
-
-    // Fonction pour obtenir les coordonnées du pointeur
-    function getPointer(event) {
-        const rect = renderer.domElement.getBoundingClientRect();
-        let clientX, clientY;
-        if (event.touches) {
-            clientX = event.touches[0].clientX;
-            clientY = event.touches[0].clientY;
-        } else {
-            clientX = event.clientX;
-            clientY = event.clientY;
+            const material = new THREE.SpriteMaterial({
+                map: texture,
+                transparent: true,
+                depthTest: false,
+                depthWrite: false
+            });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(2.8, 0.7, 1);
+            return sprite;
         }
-        return {
-            x: ((clientX - rect.left) / rect.width) * 2 - 1,
-            y: -((clientY - rect.top) / rect.height) * 2 + 1
-        };
-    }
 
-    // Gestion du clic / tap
-    function handlePointerDown(event) {
-        if (isAnimating) return;
-        const coords = getPointer(event);
-        pointer.x = coords.x;
-        pointer.y = coords.y;
+        sphereData.forEach((data) => {
+            const sprite = createLabelSprite(data.title, data.color);
+            sprite.position.set(data.position.x, data.position.y + 1.8, data.position.z);
+            scene.add(sprite);
+        });
 
-        raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(sphereMeshes);
+        // ---------- Interactions ----------
+        const raycaster = new THREE.Raycaster();
+        const pointer = new THREE.Vector2();
+        let isInsideSphere = false;
+        let isAnimating = false;
 
-        if (intersects.length > 0) {
-            const hit = intersects[0].object;
-            if (hit.userData.isSphere && !isInsideSphere) {
-                const id = hit.userData.id;
-                const data = sphereData.find(d => d.id === id);
-                if (data) {
-                    enterSphere(data, hit.position.clone());
-                }
-            }
-        }
-    }
-
-    // Écouteurs pour souris et tactile
-    renderer.domElement.addEventListener('pointerdown', handlePointerDown);
-    // Pour mobile, on garde aussi touchstart pour être sûr
-    renderer.domElement.addEventListener('touchstart', (e) => {
-        // On empêche le comportement par défaut pour éviter le scroll pendant l'interaction
-        if (e.touches.length === 1) {
-            // On laisse le pointerdown gérer
-        }
-    }, { passive: true });
-
-    // ---------- Fonctions d'entrée/sortie ----------
-    function enterSphere(data, pos) {
-        isInsideSphere = true;
-        isAnimating = true;
-        controls.autoRotate = false;
-        controls.enableZoom = false;
-        controls.rotateSpeed = 0.3;
-
-        // Fondu des étoiles et anneaux
-        stars1.material.opacity = 0.2;
-        stars2.material.opacity = 0.2;
-        ring1.material.opacity = 0.05;
-        ring2.material.opacity = 0.05;
-        ring3.material.opacity = 0.05;
-        ring4.material.opacity = 0.05;
-
-        const targetPos = pos.clone().add(new THREE.Vector3(0, 0.2, 2.2));
-        const startPos = camera.position.clone();
-        const startTarget = controls.target.clone();
-        const endTarget = pos.clone();
-
-        const duration = 1200;
-        const startTime = Date.now();
-
-        function animateCamera() {
-            const elapsed = Date.now() - startTime;
-            const t = Math.min(elapsed / duration, 1);
-            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-            camera.position.lerpVectors(startPos, targetPos, ease);
-            controls.target.lerpVectors(startTarget, endTarget, ease);
-            controls.update();
-
-            if (t < 1) {
-                requestAnimationFrame(animateCamera);
+        function getPointer(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            let clientX, clientY;
+            if (event.touches) {
+                clientX = event.touches[0].clientX;
+                clientY = event.touches[0].clientY;
             } else {
-                isAnimating = false;
-                showContent(data);
-                sphereMeshes.forEach(m => {
-                    if (m.userData.id === data.id) {
-                        m.material.emissiveIntensity = 0.8;
-                    } else {
-                        m.material.opacity = 0.2;
+                clientX = event.clientX;
+                clientY = event.clientY;
+            }
+            return {
+                x: ((clientX - rect.left) / rect.width) * 2 - 1,
+                y: -((clientY - rect.top) / rect.height) * 2 + 1
+            };
+        }
+
+        function handlePointerDown(event) {
+            if (isAnimating) return;
+            const coords = getPointer(event);
+            pointer.x = coords.x;
+            pointer.y = coords.y;
+
+            raycaster.setFromCamera(pointer, camera);
+            const intersects = raycaster.intersectObjects(sphereMeshes);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                if (hit.userData.isSphere && !isInsideSphere) {
+                    const id = hit.userData.id;
+                    const data = sphereData.find(d => d.id === id);
+                    if (data) {
+                        enterSphere(data, hit.position.clone());
                     }
-                });
-            }
-        }
-        animateCamera();
-    }
-
-    function exitSphere() {
-        isInsideSphere = false;
-        isAnimating = true;
-        controls.autoRotate = true;
-        controls.enableZoom = true;
-        controls.rotateSpeed = 0.5;
-
-        hideContent();
-
-        stars1.material.opacity = 0.8;
-        stars2.material.opacity = 0.6;
-        ring1.material.opacity = 0.2;
-        ring2.material.opacity = 0.15;
-        ring3.material.opacity = 0.25;
-        ring4.material.opacity = 0.12;
-
-        sphereMeshes.forEach(m => {
-            m.material.emissiveIntensity = 0.15;
-            m.material.opacity = 0.85;
-        });
-
-        const startPos = camera.position.clone();
-        const startTarget = controls.target.clone();
-        const endPos = new THREE.Vector3(0, 2, 14);
-        const endTarget = new THREE.Vector3(0, 0, 0);
-
-        const duration = 1000;
-        const startTime = Date.now();
-
-        function animateReturn() {
-            const elapsed = Date.now() - startTime;
-            const t = Math.min(elapsed / duration, 1);
-            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-            camera.position.lerpVectors(startPos, endPos, ease);
-            controls.target.lerpVectors(startTarget, endTarget, ease);
-            controls.update();
-
-            if (t < 1) {
-                requestAnimationFrame(animateReturn);
-            } else {
-                isAnimating = false;
-            }
-        }
-        animateReturn();
-    }
-
-    // ---------- Affichage du contenu ----------
-    function showContent(data) {
-        const isLight = document.body.classList.contains('light-theme');
-        const textColor = isLight ? '#1a1a2e' : '#ffffff';
-        const mutedColor = isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
-        const bgTag = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)';
-        const borderTag = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
-
-        contentOverlay.innerHTML = `
-            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
-                <div style="font-size: 2.8rem; color: ${data.color}; filter: drop-shadow(0 0 12px ${data.color});">
-                    <i class="${data.icon}"></i>
-                </div>
-                <h2 style="font-size: 2.2rem; font-weight: 700; margin: 0; background: linear-gradient(135deg, ${data.color}, ${isLight ? '#1a1a2e' : '#ffffff'}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                    ${data.title}
-                </h2>
-            </div>
-            <p style="font-size: 1.05rem; line-height: 1.7; margin: 0 0 20px 0; opacity: 0.9; color: ${textColor};">
-                ${data.text}
-            </p>
-            <span style="display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 18px; border-radius: 40px; background: ${bgTag}; border: 1px solid ${borderTag}; color: ${mutedColor};">
-                ${data.tag}
-            </span>
-        `;
-
-        contentOverlay.classList.add('visible');
-        backBtn.classList.add('visible');
-    }
-
-    function hideContent() {
-        contentOverlay.classList.remove('visible');
-        backBtn.classList.remove('visible');
-    }
-
-    // Bouton retour
-    backBtn.addEventListener('click', () => {
-        if (isAnimating) return;
-        exitSphere();
-    });
-
-    // ---------- Animation de la scène ----------
-    function animate() {
-        requestAnimationFrame(animate);
-
-        // Rotation des anneaux
-        ring1.rotation.y += 0.003;
-        ring2.rotation.x += 0.002;
-        ring2.rotation.z += 0.001;
-        ring3.rotation.y += 0.004;
-        ring3.rotation.x += 0.002;
-        ring4.rotation.y += 0.005;
-        ring4.rotation.z += 0.002;
-
-        // Rotation des étoiles
-        stars1.rotation.y += 0.00015;
-        stars1.rotation.x += 0.00005;
-        stars2.rotation.y -= 0.0002;
-
-        // Rotation des anneaux autour des sphères
-        ringMeshes.forEach(ring => {
-            ring.rotation.y += ring.userData.speed;
-            ring.rotation.x += ring.userData.speed * 0.3;
-        });
-
-        controls.update();
-        renderer.render(scene, camera);
-    }
-
-    animate();
-
-    // ---------- Redimensionnement ----------
-    function resize() {
-        width = section.clientWidth;
-        height = section.clientHeight;
-        camera.aspect = width / height;
-        camera.updateProjectionMatrix();
-        renderer.setSize(width, height);
-    }
-
-    window.addEventListener('resize', resize);
-
-    // ---------- Gestion du thème ----------
-    const themeBtn = document.getElementById('themeBtn');
-    themeBtn.addEventListener('click', () => {
-        const isLight = document.body.classList.contains('light-theme');
-        section.style.background = isLight ? '#dce3ef' : '#05070a';
-        // On met à jour le contenu si visible
-        if (contentOverlay.classList.contains('visible')) {
-            // On recharge le contenu avec le nouveau thème
-            // Pour simplifier, on cache et on re-affiche
-            const currentContent = contentOverlay.innerHTML;
-            // On ne fait rien de spécial, car le style est géré par les classes CSS
-        }
-    });
-
-    // Appliquer le thème initial
-    setTimeout(() => {
-        const isLight = document.body.classList.contains('light-theme');
-        section.style.background = isLight ? '#dce3ef' : '#05070a';
-    }, 100);
-
-    // ---------- Nettoyage ----------
-    window.addEventListener('beforeunload', () => {
-        renderer.dispose();
-    });
-
-    renderer.domElement.style.touchAction = 'none';
-
-    // ---------- Bouton retour en haut ----------
-    const scrollTopBtn = document.getElementById('scroll-top-btn');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            scrollTopBtn.classList.add('visible');
-        } else {
-            scrollTopBtn.classList.remove('visible');
-        }
-    });
-    scrollTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-</script>
-
-<!-- ========== SCRIPTS (gestion slider, copier, pause) ========== -->
-<script>
-    (function() {
-        const slider = document.getElementById('slider');
-        const pauseBtn = document.getElementById('pauseBtn');
-
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('.copy-btn')) return;
-                openLink(card);
-            });
-            card.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openLink(card);
                 }
-            });
-            card.addEventListener('touchend', (e) => {
-                if (e.target.closest('.copy-btn')) return;
-                setTimeout(() => {
-                    openLink(card);
-                }, 50);
-            });
-        });
-
-        function openLink(card) {
-            const link = card.getAttribute('data-link');
-            if (link) {
-                card.style.transform = 'scale(0.97)';
-                setTimeout(() => {
-                    card.style.transform = '';
-                }, 150);
-                window.open(link, '_blank', 'noopener,noreferrer');
             }
         }
 
-        document.querySelectorAll('.copy-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const card = btn.closest('.card');
-                const link = card.getAttribute('data-link');
-                if (link) {
-                    navigator.clipboard.writeText(link).then(() => {
-                        const original = btn.innerHTML;
-                        btn.innerHTML = '<i class="fas fa-check"></i>';
-                        setTimeout(() => {
-                            btn.innerHTML = original;
-                        }, 800);
-                    }).catch(() => {
-                        const textarea = document.createElement('textarea');
-                        textarea.value = link;
-                        document.body.appendChild(textarea);
-                        textarea.select();
-                        document.execCommand('copy');
-                        document.body.removeChild(textarea);
-                        const original = btn.innerHTML;
-                        btn.innerHTML = '<i class="fas fa-check"></i>';
-                        setTimeout(() => {
-                            btn.innerHTML = original;
-                        }, 800);
+        renderer.domElement.addEventListener('pointerdown', handlePointerDown);
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            // passif
+        }, { passive: true });
+
+        // ---------- Entrée / sortie ----------
+        function enterSphere(data, pos) {
+            isInsideSphere = true;
+            isAnimating = true;
+            controls.autoRotate = false;
+            controls.enableZoom = false;
+            controls.rotateSpeed = 0.3;
+
+            stars1.material.opacity = 0.2;
+            stars2.material.opacity = 0.2;
+            ring1.material.opacity = 0.05;
+            ring2.material.opacity = 0.05;
+            ring3.material.opacity = 0.05;
+            ring4.material.opacity = 0.05;
+
+            const targetPos = pos.clone().add(new THREE.Vector3(0, 0.2, 2.2));
+            const startPos = camera.position.clone();
+            const startTarget = controls.target.clone();
+            const endTarget = pos.clone();
+
+            const duration = 1200;
+            const startTime = Date.now();
+
+            function animateCamera() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                camera.position.lerpVectors(startPos, targetPos, ease);
+                controls.target.lerpVectors(startTarget, endTarget, ease);
+                controls.update();
+
+                if (t < 1) {
+                    requestAnimationFrame(animateCamera);
+                } else {
+                    isAnimating = false;
+                    showContent(data);
+                    sphereMeshes.forEach(m => {
+                        if (m.userData.id === data.id) {
+                            m.material.emissiveIntensity = 0.8;
+                        } else {
+                            m.material.opacity = 0.2;
+                        }
                     });
                 }
+            }
+            animateCamera();
+        }
+
+        function exitSphere() {
+            isInsideSphere = false;
+            isAnimating = true;
+            controls.autoRotate = true;
+            controls.enableZoom = true;
+            controls.rotateSpeed = 0.5;
+
+            hideContent();
+
+            stars1.material.opacity = 0.8;
+            stars2.material.opacity = 0.6;
+            ring1.material.opacity = 0.2;
+            ring2.material.opacity = 0.15;
+            ring3.material.opacity = 0.25;
+            ring4.material.opacity = 0.12;
+
+            sphereMeshes.forEach(m => {
+                m.material.emissiveIntensity = 0.15;
+                m.material.opacity = 0.85;
             });
+
+            const startPos = camera.position.clone();
+            const startTarget = controls.target.clone();
+            const endPos = new THREE.Vector3(0, 2, 14);
+            const endTarget = new THREE.Vector3(0, 0, 0);
+
+            const duration = 1000;
+            const startTime = Date.now();
+
+            function animateReturn() {
+                const elapsed = Date.now() - startTime;
+                const t = Math.min(elapsed / duration, 1);
+                const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+                camera.position.lerpVectors(startPos, endPos, ease);
+                controls.target.lerpVectors(startTarget, endTarget, ease);
+                controls.update();
+
+                if (t < 1) {
+                    requestAnimationFrame(animateReturn);
+                } else {
+                    isAnimating = false;
+                }
+            }
+            animateReturn();
+        }
+
+        // ---------- Contenu ----------
+        function showContent(data) {
+            const isLight = document.body.classList.contains('light-theme');
+            const textColor = isLight ? '#1a1a2e' : '#ffffff';
+            const mutedColor = isLight ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.5)';
+            const bgTag = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.08)';
+            const borderTag = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+
+            contentOverlay.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+                    <div style="font-size: 2.8rem; color: ${data.color}; filter: drop-shadow(0 0 12px ${data.color});">
+                        <i class="${data.icon}"></i>
+                    </div>
+                    <h2 style="font-size: 2.2rem; font-weight: 700; margin: 0; background: linear-gradient(135deg, ${data.color}, ${isLight ? '#1a1a2e' : '#ffffff'}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        ${data.title}
+                    </h2>
+                </div>
+                <p style="font-size: 1.05rem; line-height: 1.7; margin: 0 0 20px 0; opacity: 0.9; color: ${textColor};">
+                    ${data.text}
+                </p>
+                <span style="display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; padding: 6px 18px; border-radius: 40px; background: ${bgTag}; border: 1px solid ${borderTag}; color: ${mutedColor};">
+                    ${data.tag}
+                </span>
+            `;
+
+            contentOverlay.classList.add('visible');
+            backBtn.classList.add('visible');
+        }
+
+        function hideContent() {
+            contentOverlay.classList.remove('visible');
+            backBtn.classList.remove('visible');
+        }
+
+        backBtn.addEventListener('click', () => {
+            if (isAnimating) return;
+            exitSphere();
         });
 
-        let paused = false;
-        pauseBtn.addEventListener('click', () => {
-            paused = !paused;
-            slider.classList.toggle('paused', paused);
-            pauseBtn.innerHTML = paused ?
-                '<i class="fas fa-play"></i> Lecture' :
-                '<i class="fas fa-pause"></i> Pause';
+        // ---------- Animation ----------
+        function animate() {
+            requestAnimationFrame(animate);
+
+            ring1.rotation.y += 0.003;
+            ring2.rotation.x += 0.002;
+            ring2.rotation.z += 0.001;
+            ring3.rotation.y += 0.004;
+            ring3.rotation.x += 0.002;
+            ring4.rotation.y += 0.005;
+            ring4.rotation.z += 0.002;
+
+            stars1.rotation.y += 0.00015;
+            stars1.rotation.x += 0.00005;
+            stars2.rotation.y -= 0.0002;
+
+            ringMeshes.forEach(ring => {
+                ring.rotation.y += ring.userData.speed;
+                ring.rotation.x += ring.userData.speed * 0.3;
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // ---------- Redimensionnement ----------
+        function resize() {
+            width = section.clientWidth;
+            height = section.clientHeight;
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        window.addEventListener('resize', resize);
+
+        // ---------- Thème ----------
+        const themeBtn = document.getElementById('themeBtn');
+        themeBtn.addEventListener('click', () => {
+            const isLight = document.body.classList.contains('light-theme');
+            section.style.background = isLight ? '#dce3ef' : '#05070a';
         });
 
-        slider.addEventListener('touchstart', () => {
-            slider.classList.add('paused');
+        setTimeout(() => {
+            const isLight = document.body.classList.contains('light-theme');
+            section.style.background = isLight ? '#dce3ef' : '#05070a';
+        }, 100);
+
+        window.addEventListener('beforeunload', () => {
+            renderer.dispose();
         });
-        slider.addEventListener('touchend', () => {
-            if (!paused) {
-                slider.classList.remove('paused');
+
+        renderer.domElement.style.touchAction = 'none';
+
+        // ---------- Retour en haut ----------
+        const scrollTopBtn = document.getElementById('scroll-top-btn');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
             }
         });
-    })();
-</script>
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+    <!-- ========== SCRIPTS (slider, copier, pause) ========== -->
+    <script>
+        (function() {
+            const slider = document.getElementById('slider');
+            const pauseBtn = document.getElementById('pauseBtn');
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    if (e.target.closest('.copy-btn')) return;
+                    openLink(card);
+                });
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openLink(card);
+                    }
+                });
+                card.addEventListener('touchend', (e) => {
+                    if (e.target.closest('.copy-btn')) return;
+                    setTimeout(() => {
+                        openLink(card);
+                    }, 50);
+                });
+            });
+
+            function openLink(card) {
+                const link = card.getAttribute('data-link');
+                if (link) {
+                    card.style.transform = 'scale(0.97)';
+                    setTimeout(() => {
+                        card.style.transform = '';
+                    }, 150);
+                    window.open(link, '_blank', 'noopener,noreferrer');
+                }
+            }
+
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const card = btn.closest('.card');
+                    const link = card.getAttribute('data-link');
+                    if (link) {
+                        navigator.clipboard.writeText(link).then(() => {
+                            const original = btn.innerHTML;
+                            btn.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                btn.innerHTML = original;
+                            }, 800);
+                        }).catch(() => {
+                            const textarea = document.createElement('textarea');
+                            textarea.value = link;
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                            const original = btn.innerHTML;
+                            btn.innerHTML = '<i class="fas fa-check"></i>';
+                            setTimeout(() => {
+                                btn.innerHTML = original;
+                            }, 800);
+                        });
+                    }
+                });
+            });
+
+            let paused = false;
+            pauseBtn.addEventListener('click', () => {
+                paused = !paused;
+                slider.classList.toggle('paused', paused);
+                if (paused) {
+                    pauseBtn.innerHTML = '<i class="fas fa-play"></i><span class="btn-label">Lecture</span>';
+                    pauseBtn.classList.add('is-playing');
+                } else {
+                    pauseBtn.innerHTML = '<i class="fas fa-pause"></i><span class="btn-label">Pause</span>';
+                    pauseBtn.classList.remove('is-playing');
+                }
+            });
+
+            slider.addEventListener('touchstart', () => {
+                slider.classList.add('paused');
+            });
+            slider.addEventListener('touchend', () => {
+                if (!paused) {
+                    slider.classList.remove('paused');
+                }
+            });
+        })();
+    </script>
 
 </body>
 </html>
