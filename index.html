@@ -158,6 +158,42 @@
             transition: transform 0.2s ease, filter 0.2s;
         }
 
+        /* ---------- Image centrale (fixe) ---------- */
+        .slider-center-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            pointer-events: none;  /* ne bloque pas les clics sur les cartes */
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(100, 150, 255, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            transition: box-shadow 0.3s;
+        }
+        .slider-center-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        /* Effet au survol du slider (optionnel) */
+        .banner .slider:hover .slider-center-image {
+            box-shadow: 0 0 50px rgba(100, 150, 255, 0.5);
+        }
+        /* Light theme */
+        body.light-theme .slider-center-image {
+            border-color: rgba(0, 0, 0, 0.15);
+            box-shadow: 0 0 30px rgba(60, 100, 200, 0.2);
+        }
+        body.light-theme .banner .slider:hover .slider-center-image {
+            box-shadow: 0 0 50px rgba(60, 100, 200, 0.3);
+        }
+
         /* ---------- Cartes réseaux ---------- */
         .card {
             width: 100%;
@@ -324,8 +360,6 @@
             background: var(--controls-bg);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
-            /* border-top: 1px solid var(--card-border); */
-            /* border-bottom: 1px solid var(--card-border); */
             padding: 16px 24px;
             display: flex;
             justify-content: center;
@@ -364,7 +398,6 @@
             min-width: 120px;
         }
 
-        /* Effet de brillance au survol */
         .controls-wrapper button::before {
             content: '';
             position: absolute;
@@ -401,7 +434,6 @@
             font-weight: 500;
         }
 
-        /* Hover : lève le bouton + brillance */
         .controls-wrapper button:hover {
             background: var(--btn-hover);
             border-color: rgba(255, 255, 255, 0.15);
@@ -419,20 +451,17 @@
             transform: translateX(2px);
         }
 
-        /* Active : pression */
         .controls-wrapper button:active {
             transform: scale(0.94) translateY(1px);
             transition-duration: 0.06s;
             box-shadow: 0 2px 8px var(--btn-shadow);
         }
 
-        /* Focus-visible */
         .controls-wrapper button:focus-visible {
             outline: 2px solid rgba(100, 150, 255, 0.5);
             outline-offset: 4px;
         }
 
-        /* État "lecture" pour le bouton pause */
         .controls-wrapper button.is-playing {
             border-color: rgba(100, 200, 255, 0.25);
             box-shadow: 0 0 30px rgba(100, 150, 255, 0.06);
@@ -443,7 +472,6 @@
             opacity: 1;
         }
 
-        /* Light theme overrides */
         body.light-theme .controls-wrapper button::before {
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.01));
         }
@@ -798,6 +826,10 @@
             .controls-wrapper button i {
                 font-size: 0.95rem;
             }
+            .slider-center-image {
+                width: 60px;
+                height: 60px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -855,6 +887,10 @@
             .controls-wrapper button .btn-label {
                 display: none;
             }
+            .slider-center-image {
+                width: 50px;
+                height: 50px;
+            }
         }
     </style>
 </head>
@@ -868,6 +904,11 @@
         </div>
 
         <div class="slider" style="--quantity: 11" id="slider">
+            <!-- Image centrale (fixe) -->
+            <div class="slider-center-image">
+                <img src="img/22042026-VR-1.png" alt="Logo AG7" />
+            </div>
+
             <!-- Facebook -->
             <div class="item" style="--position: 1">
                 <div class="card" data-network="facebook" data-link="https://www.facebook.com/profile.php?id=100077852277023" role="button" tabindex="0" aria-label="Facebook, @agape_ag7">
@@ -1503,7 +1544,6 @@
             }
             // Mise à jour de l'overlay de contenu si visible
             if (contentOverlay.classList.contains('visible')) {
-                // On recharge le contenu pour mettre à jour les couleurs
                 const currentData = sphereData.find(d =>
                     d.id === document.querySelector('#content-overlay h2')?.textContent?.toLowerCase()
                 );
