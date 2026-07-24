@@ -56,17 +56,210 @@
             --center-image-glow: rgba(60, 100, 200, 0.6);
         }
 
-        /* ---------- Base ---------- */
+        /* ---------- Intro Overlay ---------- */
+        #intro-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0a0c0f;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1);
+            pointer-events: all;
+            will-change: opacity;
+            overflow: hidden;
+        }
+        #intro-overlay.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        #intro-overlay.hidden {
+            display: none;
+        }
+
+        .intro-content {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+            animation: introPulse 2.4s ease-in-out infinite;
+        }
+        .intro-content img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 20px;
+            filter: drop-shadow(0 0 40px rgba(100, 150, 255, 0.5));
+            animation: introLogo 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            transform: scale(0.7);
+            opacity: 0;
+        }
+        .intro-content .intro-title {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #fff, #b0c4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: introFadeUp 0.9s 0.3s forwards;
+        }
+        .intro-content .intro-sub {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 300;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 2px;
+            margin-top: 8px;
+            opacity: 0;
+            animation: introFadeUp 0.9s 0.5s forwards;
+        }
+
+        /* Particules */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(100, 150, 255, 0.3);
+            pointer-events: none;
+            animation: particleFloat linear infinite;
+        }
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) scale(1) rotate(0deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-120vh) scale(0.2) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        @keyframes introLogo {
+            0% {
+                transform: scale(0.7) rotate(-10deg);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        @keyframes introPulse {
+            0%,
+            100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+        }
+        @keyframes introFadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cercle lumineux tournant */
+        .intro-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1.5px solid rgba(100, 150, 255, 0.15);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            animation: ringSpin 20s linear infinite;
+        }
+        .intro-ring:nth-child(1) {
+            width: 280px;
+            height: 280px;
+            border-color: rgba(100, 150, 255, 0.12);
+            animation-duration: 18s;
+        }
+        .intro-ring:nth-child(2) {
+            width: 380px;
+            height: 380px;
+            border-color: rgba(100, 150, 255, 0.08);
+            animation-duration: 25s;
+            animation-direction: reverse;
+        }
+        .intro-ring:nth-child(3) {
+            width: 480px;
+            height: 480px;
+            border-color: rgba(100, 150, 255, 0.05);
+            animation-duration: 30s;
+        }
+        @keyframes ringSpin {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .intro-content img {
+                width: 140px;
+                height: 140px;
+            }
+            .intro-content .intro-title {
+                font-size: 1.5rem;
+            }
+            .intro-ring:nth-child(1) {
+                width: 200px;
+                height: 200px;
+            }
+            .intro-ring:nth-child(2) {
+                width: 280px;
+                height: 280px;
+            }
+            .intro-ring:nth-child(3) {
+                width: 360px;
+                height: 360px;
+            }
+        }
+        @media (max-width: 480px) {
+            .intro-content img {
+                width: 100px;
+                height: 100px;
+            }
+            .intro-content .intro-title {
+                font-size: 1.2rem;
+            }
+            .intro-ring:nth-child(1) {
+                width: 160px;
+                height: 160px;
+            }
+            .intro-ring:nth-child(2) {
+                width: 220px;
+                height: 220px;
+            }
+            .intro-ring:nth-child(3) {
+                width: 280px;
+                height: 280px;
+            }
+        }
+
+        /* ---------- Base (suite) ---------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         html {
             scroll-behavior: smooth;
         }
-
         body {
             background: var(--bg-page);
             overflow-x: hidden;
@@ -166,9 +359,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 15;  /* au‑dessus des cartes */
-            pointer-events: none;  /* ne bloque pas les clics */
-            width: 220px;          /* taille augmentée */
+            z-index: 15;
+            pointer-events: none;
+            width: 220px;
             height: 220px;
             display: flex;
             align-items: center;
@@ -179,15 +372,13 @@
         .slider-center-image img {
             width: 100%;
             height: 100%;
-            object-fit: contain;  /* préserve la transparence et le ratio */
+            object-fit: contain;
             display: block;
         }
-        /* Effet au survol du slider (renforce la lueur et l'échelle) */
         .banner .slider:hover .slider-center-image {
             filter: drop-shadow(0 0 80px var(--center-image-glow)) brightness(1.08);
             transform: translate(-50%, -50%) scale(1.08);
         }
-        /* Light theme : ajustement de la lueur */
         body.light-theme .slider-center-image {
             filter: drop-shadow(0 0 50px var(--center-image-glow));
         }
@@ -897,6 +1088,22 @@
 </head>
 <body>
 
+    <!-- ========== INTRO ANIMÉE ========== -->
+    <div id="intro-overlay">
+        <!-- Cercles décoratifs -->
+        <div class="intro-ring"></div>
+        <div class="intro-ring"></div>
+        <div class="intro-ring"></div>
+
+        <div class="intro-content">
+            <img src="ico/AG7.png" alt="Logo AG7" />
+            <div class="intro-title">AG7</div>
+            <div class="intro-sub">Créateur · Développeur · Designer</div>
+        </div>
+
+        <!-- Particules générées par JS -->
+    </div>
+
     <!-- ========== BANNER SLIDER ========== -->
     <div class="banner">
         <div class="header">
@@ -1586,9 +1793,48 @@
         });
     </script>
 
-    <!-- ========== SCRIPTS (slider, copier, pause) ========== -->
+    <!-- ========== SCRIPTS (slider, copier, pause, intro) ========== -->
     <script>
         (function() {
+            // ---------- Intro ----------
+            const intro = document.getElementById('intro-overlay');
+            let introHidden = false;
+
+            function hideIntro() {
+                if (introHidden) return;
+                introHidden = true;
+                intro.classList.add('fade-out');
+                setTimeout(() => {
+                    intro.classList.add('hidden');
+                }, 800);
+            }
+
+            // Fermeture automatique après 3.5s
+            setTimeout(hideIntro, 3500);
+
+            // Fermeture au clic / tap
+            intro.addEventListener('click', hideIntro);
+            intro.addEventListener('touchstart', hideIntro, { passive: true });
+
+            // Génération des particules
+            const particleCount = 35;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = 4 + Math.random() * 10;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = (100 + Math.random() * 30) + '%';
+                particle.style.animationDuration = (8 + Math.random() * 18) + 's';
+                particle.style.animationDelay = (Math.random() * 12) + 's';
+                particle.style.opacity = 0.3 + Math.random() * 0.3;
+                particle.style.background =
+                    `radial-gradient(circle, rgba(100, 150, 255, ${0.2 + Math.random() * 0.3}), transparent)`;
+                intro.appendChild(particle);
+            }
+
+            // ---------- Slider & copier (existants) ----------
             const slider = document.getElementById('slider');
             const pauseBtn = document.getElementById('pauseBtn');
 

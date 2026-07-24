@@ -1,0 +1,1 @@
+Nous allons ajouter une intro animée avant le site. Cette intro doit être professionnelle, avec des animations modernes, et afficher le logo AG7.png situé dans le dossier ico/
