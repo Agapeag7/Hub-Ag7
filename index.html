@@ -597,8 +597,8 @@
             border-radius: 60px;
             padding: 1.5px;
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
+            --webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            --webkit-mask-composite: xor;
             mask-composite: exclude;
             pointer-events: none;
             opacity: 0;
@@ -1112,7 +1112,6 @@
         </div>
 
         <div class="slider" style="--quantity: 11" id="slider">
-            <!-- Image centrale – PNG transparent, grande et lumineuse -->
             <div class="slider-center-image">
                 <img src="img/22042026-VR-1.png" alt="Logo AG7" />
             </div>
